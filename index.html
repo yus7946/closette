@@ -86,7 +86,15 @@ h2.title .en{font-size:16px;color:var(--muted)}
 .hang svg{width:calc(var(--w)*.75px);height:auto;display:block;overflow:visible;filter:drop-shadow(0 6px 5px rgba(0,0,0,.14));transition:transform .4s var(--ease)}
 .hang:hover>*{transform:translateY(-4px)}
 .hg{stroke:url(#hgG)}.hgf{fill:url(#hgG)}.hgb{stroke-width:var(--hgw,3.5)}.hk{stroke:#b4b4ba}
-.hang>*{transition:transform .4s var(--ease)}
+.hang>*{transition:transform .4s var(--ease)}.hang,.shelf .it{position:relative}
+.tg{position:absolute;left:6px;bottom:-8px;transform:rotate(-6deg);background:#fffdf8;border:1px solid rgba(0,0,0,.08);border-radius:3px;padding:3px 7px 3px 11px;font-size:8.5px;letter-spacing:.06em;line-height:1.25;color:#5a4e48;box-shadow:0 3px 5px rgba(0,0,0,.18);z-index:3;max-width:92px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tg::before{content:'';position:absolute;left:4px;top:50%;width:3px;height:3px;border-radius:50%;background:rgba(0,0,0,.28);transform:translateY(-50%)}
+.tg b{display:block;font-family:'Cormorant Garamond','Shippori Mincho',serif;font-size:11.5px;font-weight:600;color:#2b2422;overflow:hidden;text-overflow:ellipsis}
+.shelf .tg{left:auto;right:-6px;bottom:auto;top:-6px;transform:rotate(5deg)}
+.brand{font-family:'Cormorant Garamond','Shippori Mincho',serif;font-size:15px;letter-spacing:.14em;color:var(--accent);margin-top:12px;font-weight:600}
+.spec{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.spec div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 11px}
+.spec dt{font-size:10px;color:var(--muted)}.spec dd{font-size:14px;margin:0;word-break:break-all}
 .hang.pht{position:relative;width:calc(var(--pw)*1px);margin-right:-10px}
 .hang.pht .hgr{position:absolute;top:0;left:50%;width:120px;margin-left:-60px;height:auto;z-index:0;overflow:visible}
 .hang.pht img{display:block;width:100%;margin-top:30px;position:relative;z-index:1;filter:drop-shadow(0 10px 8px rgba(0,0,0,.22)) drop-shadow(0 2px 2px rgba(0,0,0,.12))}
@@ -317,6 +325,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
 </div>
 <div class="backdrop" data-act="close"></div>
 <div class="sheet" id="sheet"></div>
+<datalist id="sizes"><option>XS<option>S<option>M<option>L<option>XL<option>FREE<option>36<option>38<option>40<option>23.5<option>24.0</datalist>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -380,7 +389,12 @@ function finishCut(c,src){const w=c.width,h=c.height,cx=c.getContext('2d'),im=cx
  for(let y=0;y<h;y+=2)for(let X=0;X<w;X+=2){const i=(y*w+X)*4;if(d[i+3]>40){op++;if(X<x0)x0=X;if(X>x1)x1=X;if(y<y0)y0=y;if(y>y1)y1=y;if(d[i+3]>200){r+=d[i];g+=d[i+1];b+=d[i+2];n++}}}
  const ratio=op/(w*h/4);if(ratio<.04||ratio>.97||!n){const s=toCanvas(src,640);return{url:s.toDataURL('image/jpeg',.82),color:avgC(s),cut:false}}
  const cw=x1-x0+2,ch=y1-y0+2,k=Math.min(1,640/Math.max(cw,ch)),o=document.createElement('canvas');o.width=Math.round(cw*k);o.height=Math.round(ch*k);o.getContext('2d').drawImage(c,x0,y0,cw,ch,0,0,o.width,o.height);
- return{url:o.toDataURL('image/png'),color:hex([r/n,g/n,b/n]),cut:true}}
+ enhance(o);return{url:o.toDataURL('image/png'),color:hex([r/n,g/n,b/n]),cut:true}}
+// smooth cutout edges and give a gentle "product photo" finish (mild contrast/saturation, no color shift)
+function enhance(o){const w=o.width,h=o.height,x=o.getContext('2d'),im=x.getImageData(0,0,w,h),d=im.data,a=new Uint8ClampedArray(w*h);for(let p=0;p<w*h;p++)a[p]=d[p*4+3];
+ for(let y=1;y<h-1;y++)for(let X=1;X<w-1;X++){const p=y*w+X;d[p*4+3]=(a[p-w-1]+a[p-w]+a[p-w+1]+a[p-1]+a[p]*2+a[p+1]+a[p+w-1]+a[p+w]+a[p+w+1])/10}
+ for(let i=0;i<d.length;i+=4){if(!d[i+3])continue;const r=(d[i]-128)*1.07+132,g=(d[i+1]-128)*1.07+132,b=(d[i+2]-128)*1.07+132,l=(r+g+b)/3;d[i]=l+(r-l)*1.1;d[i+1]=l+(g-l)*1.1;d[i+2]=l+(b-l)*1.1}
+ x.putImageData(im,0,0)}
 function makeTex(){const c=document.createElement('canvas');c.width=c.height=80;const x=c.getContext('2d'),im=x.createImageData(80,80);for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=Math.random()*38}x.putImageData(im,0,0);$('#texImg').setAttribute('href',c.toDataURL())}
 function applyLook(){const a=$('#app'),h=HANGERS[S.hanger&&S.hanger!=='auto'?S.hanger:SKIN_HG[S.skin]],sk=S.profile.skin,hr=S.profile.hair;a.dataset.skin=S.skin;a.style.setProperty('--hgw',h.w);
  [['hg0',h.c[0]],['hg1',h.c[1]],['hg2',h.c[2]],['sk0',shade(sk,-.1)],['sk1',shade(sk,.07)],['sk2',shade(sk,-.13)],['fk0',shade(sk,.07)],['fk1',shade(sk,-.05)],['hr0',shade(hr,.2)],['hr1',hr],['hr2',shade(hr,-.28)]].forEach(([id,c])=>$('#'+id).setAttribute('stop-color',c))}
@@ -491,7 +505,8 @@ function seed(){const A=SO,I=(type,color,name,seasons,care=[])=>({id:uid(),type,
  I('flare','#e4d3bd','ベージュフレアスカート',['spring','autumn'],['hand']),I('skirt','#26262b','ブラックタイトスカート',A,['dry']),I('pants','#5b7ba3','デニム',A,['w30','notumble']),I('wide','#f2efe8','ホワイトワイドパンツ',['spring','summer'],['w30','net']),I('pants','#8d8f95','グレースラックス',['autumn','winter','spring'],['dry']),
  I('dress','#2e3b5c','ネイビーワンピース',['spring','autumn','winter'],['dry']),I('dress','#a7b89a','セージワンピース',['spring','summer'],['hand','shade']),I('coat','#b8875a','キャメルコート',['winter'],['dry','nowash']),I('coat','#9a9aa0','グレーロングコート',['winter'],['dry']),I('coat','#d2b48c','トレンチコート',['spring','autumn'],['dry']),I('jacket','#2b2b30','ブラックジャケット',['spring','autumn'],['dry']),
  I('shoulder','#2a2a2e','黒ショルダー',A),I('tote','#d9c3a3','ベージュトート',A),I('pumps','#2a2a2e','黒パンプス',A),I('sneaker','#f4f4f4','白スニーカー',A),I('necklace','#d4af37','ゴールドネックレス',A)];
- items.forEach((it,i)=>{it.wear=(i*7)%13;it.last=i%4===0?daysAgo(120+i):daysAgo(i*3+1)});
+ const BR=['atelier lune','maison mio','NORDE','Sorella','kumo & co.'];
+ items.forEach((it,i)=>{it.brand=BR[i%5];it.size={tops:'M',bottoms:'S',dress:'M',outer:'38',shoes:'23.5'}[it.cat]||'';it.wear=(i*7)%13;it.last=i%4===0?daysAgo(120+i):daysAgo(i*3+1)});
  const cos=[['lip','#c25b6e','ローズリップ'],['lip','#e7735f','コーラルリップ'],['cheek','#f19cab','ピンクチーク'],['eye','#a57863','ブラウンパレット']].map(([kind,color,name])=>({id:uid(),cat:'cosme',kind,color,name,brand:'',sample:true}));
  return{v:1,items,cosme:cos,profile:{...DEFP},skin:'natural',outfit:{tops:items[1].id,bottoms:items[7].id,bag:items[18].id,shoes:items[20].id,acc:items[22].id,lip:cos[0].id,cheek:cos[2].id,eye:cos[3].id},interest:0,onboarded:false,virtual:{}}}
 function similar(type,color,ex){const cat=TYPES[type].c;return S.items.filter(i=>i.id!==ex&&((i.type===type&&cdist(i.color,color)<130)||(i.cat===cat&&i.type!==type&&cdist(i.color,color)<60)))}
@@ -506,8 +521,10 @@ const sortKey=it=>{const {h,s,l}=hsl(it.color);return s<.18?400+(1-l)*100:h};
 const hangSort=(a,b)=>HANG.indexOf(a.cat)-HANG.indexOf(b.cat)||sortKey(a)-sortKey(b);
 const kOf=it=>(.8+(it.id.charCodeAt(0)%9)/20).toFixed(2),PW={tops:116,outer:124,dress:112,bottoms:100};
 const HK='<path class="hk" d="M70,26 V12 C70,3 80,1 80,9" fill="none" stroke-width="2.6" stroke-linecap="round"/>';
-function hangPhoto(it){const bt=it.cat==='bottoms';return`<div class="hang pht${bt?' bt':''}" data-act="detail" data-id="${it.id}" style="--k:${kOf(it)};--pw:${PW[it.cat]}"><svg class="hgr" viewBox="0 0 140 60">${HK}${bt?'<path class="hg hgb" d="M18,34 H122" stroke-linecap="round"/><rect class="hgf" x="28" y="31" width="6" height="11" rx="1.5"/><rect class="hgf" x="106" y="31" width="6" height="11" rx="1.5"/>':'<path class="hg hgb" d="M70,25 C60,29 30,36 14,42 Q9,44.5 15,45 L125,45 Q131,44.5 126,42 C110,36 80,29 70,25 Z" fill="none" stroke-linejoin="round"/>'}</svg><img src="${it.photo}" alt="${esc(it.name)}" draggable="false"></div>`}
-const hangHTML=it=>it.cut&&it.photo?hangPhoto(it):`<div class="hang" data-act="detail" data-id="${it.id}" style="--k:${kOf(it)}">${itemSVG(it)}</div>`;
+function hangPhoto(it){const bt=it.cat==='bottoms';return`<div class="hang pht${bt?' bt':''}" data-act="detail" data-id="${it.id}" style="--k:${kOf(it)};--pw:${PW[it.cat]}"><svg class="hgr" viewBox="0 0 140 60">${HK}${bt?'<path class="hg hgb" d="M18,34 H122" stroke-linecap="round"/><rect class="hgf" x="28" y="31" width="6" height="11" rx="1.5"/><rect class="hgf" x="106" y="31" width="6" height="11" rx="1.5"/>':'<path class="hg hgb" d="M70,25 C60,29 30,36 14,42 Q9,44.5 15,45 L125,45 Q131,44.5 126,42 C110,36 80,29 70,25 Z" fill="none" stroke-linejoin="round"/>'}</svg><img src="${it.photo}" alt="${esc(it.name)}" draggable="false">${tagH(it)}</div>`}
+const tagH=it=>it.brand||it.size?`<span class="tg">${it.brand?`<b>${esc(it.brand)}</b>`:''}${it.size?`SIZE ${esc(it.size)}`:''}</span>`:'';
+const specH=it=>{const r=[['ブランド',it.brand],['サイズ',it.size],['素材',it.mat],['購入店',it.shop],['価格',it.price?'¥'+(+it.price).toLocaleString():''],['購入日',it.bought]].filter(x=>x[1]);return r.length?`<dl class="spec">${r.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`:''};
+const hangHTML=it=>it.cut&&it.photo?hangPhoto(it):`<div class="hang" data-act="detail" data-id="${it.id}" style="--k:${kOf(it)}">${itemSVG(it)}${tagH(it)}</div>`;
 const itemVis=it=>it.cut&&it.photo?`<img class="cut" src="${it.photo}" alt="">`:itemSVG(it);
 const pk=(it,on,act='detail')=>`<div class="pk ${on?'on':''}${it.virtual?' v':''}" data-act="${act}" data-id="${it.id}">${itemVis(it)}<span>${it.virtual?'🛍 ':''}${esc(it.name)}</span></div>`;
 function drop(sel){if(G)G.from(sel,{y:-22,opacity:0,stagger:.03,duration:.5,ease:'back.out(1.7)',clearProps:'opacity,transform'})}
@@ -519,7 +536,7 @@ function renderCloset(){
  const ok=i=>fSea==='all'||i.seasons.includes(fSea);
  const hang=S.items.filter(i=>HANG.includes(i.cat)&&(fCat==='all'||i.cat===fCat)&&ok(i)).sort(hangSort);
  $('#rail').innerHTML=hang.map(hangHTML).join('')||'<p class="empty">該当する服がありません</p>';
- $('#shelf').innerHTML=S.items.filter(i=>!HANG.includes(i.cat)&&ok(i)).map(i=>`<div class="it" data-act="detail" data-id="${i.id}">${i.cut&&i.photo?`<img src="${i.photo}" alt="">`:`<svg viewBox="0 0 80 80">${shelfSVG(i)}</svg>`}</div>`).join('');
+ $('#shelf').innerHTML=S.items.filter(i=>!HANG.includes(i.cat)&&ok(i)).map(i=>`<div class="it" data-act="detail" data-id="${i.id}">${i.cut&&i.photo?`<img src="${i.photo}" alt="">`:`<svg viewBox="0 0 80 80">${shelfSVG(i)}</svg>`}${tagH(i)}</div>`).join('');
  $('#vanity').innerHTML=S.cosme.map(i=>`<div class="it" data-act="detail" data-id="${i.id}"><svg viewBox="0 0 80 80">${shelfSVG(i)}</svg></div>`).join('');
  $('#count').textContent=`全${S.items.length+S.cosme.length}点`;
 }
@@ -612,7 +629,7 @@ function go(v){cur=v;$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+
 function openDetail(id){const it=getItem(id);if(!it)return;const C=it.cat==='cosme';
  const cpw=it.price&&it.wear?`¥${Math.round(it.price/it.wear).toLocaleString()}`:'—';
  openSheet(`<div class="d-vis">${itemVis(it)}${it.photo&&!it.cut?`<img src="${it.photo}" alt="">`:''}</div>
- <h3 class="sh-title" style="margin-top:12px">${esc(it.name)}</h3><p class="muted">${C?COSME[it.kind]:TYPES[it.type].n}${it.brand?' ・ '+esc(it.brand):''} ・ ${cname(it.color)}</p>
+ ${it.brand?`<p class="brand">${esc(it.brand)}</p>`:''}<h3 class="sh-title" style="margin-top:${it.brand?2:12}px">${esc(it.name)}</h3><p class="muted">${C?COSME[it.kind]:TYPES[it.type].n} ・ ${cname(it.color)}</p>${specH(it)}
  ${C?'':`<div class="d-meta">${SO.map(k=>`<span class="chip sm ${it.seasons.includes(k)?'on':''}">${SEASONS[k]}</span>`).join('')}</div>
  <div class="kv"><div><b>${it.wear||0}</b><span>着用回数</span></div><div><b>${it.last?it.last.slice(5).replace('-','/'):'—'}</b><span>最後に着た日</span></div><div><b>${cpw}</b><span>1回あたり</span></div></div>
  <p class="fl" style="margin-top:0">洗い方</p><div class="care">${it.care.length?it.care.map(k=>`<span>${CARE[k]}</span>`).join(''):'<span>未登録</span>'}</div>
@@ -632,13 +649,14 @@ function drawForm(){const f=FM,C=f._c;
  <div class="fl">色<div class="sw">${SW.map(c=>`<button class="swc ${f.color===c?'on':''}" style="background:${c}" data-act="fColor" data-c="${c}"></button>`).join('')}<input type="color" id="f-color" value="${f.color}"></div></div>
  <div id="simBox"></div>
  <label class="fl">名前<input id="f-name" value="${esc(f.name)}" placeholder="空欄なら自動でつけます"></label>
- <label class="fl">ブランド<input id="f-brand" value="${esc(f.brand)}"></label>
+ <label class="fl">ブランド<input id="f-brand" value="${esc(f.brand)}" placeholder="クローゼットのタグに表示されます"></label>
+ ${C?'':`<div class="two"><label class="fl">サイズ<input id="f-size" list="sizes" value="${esc(f.size||'')}" placeholder="M / 38 / 23.5"></label><label class="fl">素材<input id="f-mat" value="${esc(f.mat||'')}" placeholder="綿100%"></label></div><label class="fl">購入店<input id="f-shop" value="${esc(f.shop||'')}" placeholder="どこで買ったか"></label>`}
  ${C?'':`<div class="fl">着る季節<div class="chips in">${SO.map(k=>`<button class="chip ${f.seasons.includes(k)?'on':''}" data-act="fSea" data-k="${k}">${SEASONS[k]}</button>`).join('')}</div></div>
  <div class="fl">洗い方（タグの表示）<div class="chips in wrap">${Object.entries(CARE).map(([k,n])=>`<button class="chip sm ${f.care.includes(k)?'on':''}" data-act="fCare" data-k="${k}">${n}</button>`).join('')}</div></div>
  <div class="two"><label class="fl">価格（円）<input id="f-price" type="number" inputmode="numeric" value="${f.price}"></label><label class="fl">購入日<input id="f-bought" type="date" value="${f.bought}"></label></div>
  <label class="fl">メモ<textarea id="f-memo" rows="2">${esc(f.memo)}</textarea></label>`}
  <button class="btn accent wide" data-act="fSave">クローゼットにしまう</button>`);updPrev()}
-function readForm(){const v=id=>$('#'+id)?.value;if(!FM)return;if(FM._c)FM.kind=v('f-kind');else{FM.type=v('f-type');FM.price=v('f-price');FM.bought=v('f-bought');FM.memo=v('f-memo')}FM.name=v('f-name');FM.brand=v('f-brand');setColor(v('f-color'))}
+function readForm(){const v=id=>$('#'+id)?.value;if(!FM)return;if(FM._c)FM.kind=v('f-kind');else{FM.type=v('f-type');FM.size=v('f-size');FM.mat=v('f-mat');FM.shop=v('f-shop');FM.price=v('f-price');FM.bought=v('f-bought');FM.memo=v('f-memo')}FM.name=v('f-name');FM.brand=v('f-brand');setColor(v('f-color'))}
 function setColor(c){if(!c||!FM)return;FM.color=c;$$('#sheet .swc').forEach(b=>b.classList.toggle('on',b.dataset.c===c));if($('#f-color'))$('#f-color').value=c;updPrev()}
 function updPrev(){const f=FM;if(!f||!$('#fPrev'))return;const it={...f,cat:f._c?'cosme':TYPES[f.type].c};$('#fPrev').innerHTML=itemVis(it);
  if(f._c)return;const sim=similar(f.type,f.color,f.id);$('#simBox').innerHTML=sim.length?`<div class="warn"><b>⚠ 似たアイテムを${sim.length}点持っています</b><div class="mlist">${sim.map(i=>pk(i,false,'x')).join('')}</div><span class="muted">「また同じの買っちゃった」を防止</span></div>`:''}
