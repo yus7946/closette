@@ -54,7 +54,24 @@ h2.title .en{font-size:16px;color:var(--muted)}
 .row .btn{flex:1}
 .muted{color:var(--muted);font-size:12px}
 /* closet stage */
-.stage{position:relative;margin:6px 12px 0;border-radius:24px;overflow:hidden;background:var(--wall);box-shadow:0 12px 30px rgba(60,40,30,.12);isolation:isolate}
+.stage{position:relative;margin:6px 12px 0;border-radius:24px;overflow:hidden;background:var(--wall);box-shadow:inset 0 22px 30px -16px rgba(0,0,0,.22),inset 18px 0 26px -18px rgba(0,0,0,.2),inset -18px 0 26px -18px rgba(0,0,0,.2),0 12px 30px rgba(60,40,30,.14);isolation:isolate}
+.stage::after{content:'';position:absolute;inset:0;background:radial-gradient(40% 30% at 22% 0,var(--glow),transparent 70%),radial-gradient(40% 30% at 78% 0,var(--glow),transparent 70%);z-index:-1;pointer-events:none;opacity:.8}
+.rail-bar::before,.rail-bar::after{content:'';position:absolute;top:-6px;width:10px;height:20px;border-radius:3px;background:var(--rail);box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.rail-bar::before{left:4px}.rail-bar::after{right:4px}
+.rail-bar{background-image:linear-gradient(180deg,rgba(255,255,255,.55) 0 18%,transparent 40%),var(--rail)}
+[data-skin=marble]{--wall:linear-gradient(118deg,transparent 38%,rgba(150,150,160,.16) 39%,transparent 41%),linear-gradient(64deg,transparent 58%,rgba(140,140,150,.13) 59%,transparent 61%),linear-gradient(150deg,transparent 70%,rgba(190,170,140,.12) 71%,transparent 73%),linear-gradient(180deg,#fdfdfc,#ecebe7);--rail:linear-gradient(180deg,#fdeab0,#c99a3a 55%,#8f6a22);--shelf:linear-gradient(180deg,#fff,#d9d6d0);--door:linear-gradient(90deg,#f7f6f3,#e9e7e2);--lab:#6f675d;--glow:rgba(255,236,200,.85)}
+.hgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.hgc{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 4px 6px;font-size:10px;cursor:pointer;position:relative;text-align:center}
+.hgc.on{box-shadow:inset 0 0 0 2px var(--ink)}
+.hgc i{display:block;width:30px;height:30px;border-radius:50%;margin:0 auto 4px;box-shadow:inset 0 -3px 6px rgba(0,0,0,.25),inset 0 3px 5px rgba(255,255,255,.6)}
+.hgc em{position:absolute;top:-6px;right:-4px;font-style:normal;font-size:8px;background:linear-gradient(135deg,#f3d48a,#b8892d);color:#3a2a10;padding:1px 4px;border-radius:6px;font-weight:700}
+.pk img{width:100%;height:66px;object-fit:contain;display:block}
+.shelf .it img{height:64px;width:auto;max-width:90px;display:block;filter:drop-shadow(0 4px 3px rgba(0,0,0,.18))}
+.d-vis img.cut{width:auto;max-width:70%;height:260px;object-fit:contain;aspect-ratio:auto;border-radius:0;filter:drop-shadow(0 10px 10px rgba(0,0,0,.2))}
+.f-prev img{height:130px;width:auto;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(0,0,0,.18))}
+.proc{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--accent);margin-top:6px}
+.proc::before{content:'';width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .stage::before{content:'';position:absolute;left:10%;right:10%;top:-60px;height:220px;background:radial-gradient(closest-side,var(--glow),transparent);z-index:-1;pointer-events:none}
 [data-skin=gorgeous] .stage{box-shadow:inset 0 0 0 3px #c99a3a,inset 0 0 0 6px #5a1624,0 12px 30px rgba(60,20,30,.3)}
 [data-skin=night] .rail-bar{box-shadow:0 8px 22px rgba(255,180,100,.55)}
@@ -67,8 +84,14 @@ h2.title .en{font-size:16px;color:var(--muted)}
 .rail{display:flex;overflow-x:auto;padding:14px 26px 22px;align-items:flex-start;scrollbar-width:none;position:relative;cursor:grab;touch-action:pan-x pan-y}
 .hang{flex:0 0 auto;margin-right:-16px;transform-origin:50% 7px;transform:rotate(calc(var(--sw,0deg) * var(--k,1)));will-change:transform;cursor:pointer}
 .hang svg{width:calc(var(--w)*.75px);height:auto;display:block;overflow:visible;filter:drop-shadow(0 6px 5px rgba(0,0,0,.14));transition:transform .4s var(--ease)}
-.hang:hover svg{transform:translateY(-4px)}
-.hg{stroke:var(--hanger)}.hgf{fill:var(--hanger)}
+.hang:hover>*{transform:translateY(-4px)}
+.hg{stroke:url(#hgG)}.hgf{fill:url(#hgG)}.hgb{stroke-width:var(--hgw,3.5)}.hk{stroke:#b4b4ba}
+.hang>*{transition:transform .4s var(--ease)}
+.hang.pht{position:relative;width:calc(var(--pw)*1px);margin-right:-10px}
+.hang.pht .hgr{position:absolute;top:0;left:50%;width:120px;margin-left:-60px;height:auto;z-index:0;overflow:visible}
+.hang.pht img{display:block;width:100%;margin-top:30px;position:relative;z-index:1;filter:drop-shadow(0 10px 8px rgba(0,0,0,.22)) drop-shadow(0 2px 2px rgba(0,0,0,.12))}
+.hang.pht.bt .hgr{z-index:2}.hang.pht.bt img{margin-top:31px}
+.rail.mini .hang.pht{transform-origin:50% 5px;zoom:.66}
 .rail.mini .hang svg{width:calc(var(--w)*.5px)}
 .rail.mini .hang{margin-right:-10px}
 .rail.mini{padding-top:10px}
@@ -194,6 +217,14 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="shd" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".13"/><stop offset=".35" stop-color="#fff" stop-opacity=".13"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".15"/></linearGradient>
+<linearGradient id="hgG" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="7" spreadMethod="reflect"><stop id="hg0" offset="0" stop-color="#e2b88a"/><stop id="hg1" offset=".55" stop-color="#8d5f3b"/><stop id="hg2" offset="1" stop-color="#b98552"/></linearGradient>
+<linearGradient id="skinG" x1="0" x2="1"><stop id="sk0" offset="0"/><stop id="sk1" offset=".45"/><stop id="sk2" offset="1"/></linearGradient>
+<radialGradient id="faceG" cx=".5" cy=".42" r=".62"><stop id="fk0" offset="0"/><stop id="fk1" offset="1"/></radialGradient>
+<linearGradient id="hairG" x1="0" y1="0" x2="0" y2="1"><stop id="hr0" offset="0"/><stop id="hr1" offset=".35"/><stop id="hr2" offset="1"/></linearGradient>
+<radialGradient id="iris" cx=".5" cy=".62" r=".6"><stop offset="0" stop-color="#8a5a3c"/><stop offset=".7" stop-color="#4a2c1c"/><stop offset="1" stop-color="#22140c"/></radialGradient>
+<clipPath id="eyeClip"><path d="M85,59 Q91,54.5 97,59 Q91,62.6 85,59 Z M103,59 Q109,54.5 115,59 Q109,62.6 103,59 Z"/></clipPath>
+<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.8"/></filter>
+<pattern id="tex" width="40" height="40" patternUnits="userSpaceOnUse"><image id="texImg" width="40" height="40"/></pattern>
 </defs></svg>
 
 <div id="app" data-skin="natural">
@@ -270,7 +301,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
         <ul><li>AIスタイリストにチャットで相談（「明日のデート何着る？」）</li><li>プロのスタイリストに相談</li><li>限定クローゼットスキン</li></ul>
         <button class="btn accent wide" data-act="interest">使ってみたい！</button></div>
       <div class="card"><h3>データ</h3><p class="muted">データはこの端末のブラウザ内に保存されます。機種変更前にバックアップを。</p>
-        <div class="row" style="padding:8px 0 0"><button class="btn sm ghost" data-act="export">バックアップ</button><label class="btn sm ghost">復元<input type="file" accept="application/json" id="importF" hidden></label><button class="btn sm ghost" data-act="reset">初期化</button></div></div>
+        <div class="row" style="padding:8px 0 0"><button class="btn sm ghost" data-act="export">バックアップ</button><label class="btn sm ghost">復元<input type="file" accept="application/json" id="importF" hidden></label><button class="btn sm ghost" data-act="reset">初期化</button></div><button class="btn sm ghost wide" data-act="clearSamples">サンプルの服を消して、自分の服だけにする</button></div>
     </section>
   </main>
 
@@ -303,7 +334,9 @@ const COSME={lip:'リップ',cheek:'チーク',eye:'アイシャドウ'};
 const SEASONS={spring:'春',summer:'夏',autumn:'秋',winter:'冬'};
 const SO=['spring','summer','autumn','winter'];
 const CARE={w30:'洗濯機 30℃',w40:'洗濯機 40℃',hand:'手洗い',nowash:'水洗い不可',net:'ネット使用',nobleach:'漂白不可',notumble:'乾燥機不可',shade:'陰干し',flat:'平干し',ironL:'アイロン低温',ironM:'アイロン中温',noiron:'アイロン不可',dry:'ドライクリーニング'};
-const SKINS={natural:{n:'ナチュラルウッド'},minimal:{n:'ミニマルホワイト'},gorgeous:{n:'ゴージャスベルベット',p:1},girly:{n:'ピンクパリジェンヌ',p:1},night:{n:'ナイトブティック',p:1}};
+const SKINS={natural:{n:'ナチュラルウッド'},minimal:{n:'ミニマルホワイト'},gorgeous:{n:'ゴージャスベルベット',p:1},girly:{n:'ピンクパリジェンヌ',p:1},marble:{n:'マーブル×ゴールド',p:1},night:{n:'ナイトブティック',p:1}};
+const HANGERS={auto:{n:'おまかせ'},wood:{n:'ウッド',c:['#e2b88a','#8d5f3b','#b98552'],w:5.5},silver:{n:'シルバー',c:['#ffffff','#9b9ba0','#d6d6da'],w:3.4},black:{n:'ブラック',c:['#6a6a72','#18181b','#3a3a40'],w:4.5},gold:{n:'ゴールド',c:['#fff3c4','#b8892d','#e9c76a'],w:3.6,p:1},rosegold:{n:'ローズゴールド',c:['#ffe6da','#b97a66','#e3a994'],w:3.6,p:1},pink:{n:'ピンク',c:['#ffeef2','#e094a8','#f4bccb'],w:5,p:1},clear:{n:'クリア',c:['#ffffff','#b9c9d4','#e6eef3'],w:5,p:1}};
+const SKIN_HG={natural:'wood',minimal:'silver',gorgeous:'gold',girly:'pink',marble:'gold',night:'silver'};
 const SW=['#ffffff','#f6f1ea','#e4d3bd','#c49a6c','#8b5e3c','#26262b','#8d8f95','#2e3b5c','#5b7ba3','#a9c8e8','#c7b8e0','#efc4cc','#c25b6e','#8a1f3d','#a7b89a','#6f7546','#f6d55c','#e7735f'];
 const SKINC=['#f8e1d2','#f3d6c4','#e8bf9f','#d4a07c','#a8724f'],HAIRC=['#211a18','#4a3226','#7a5238','#b89270','#c9a9a6'];
 const DEFP={height:158,weight:48,bust:84,waist:62,hip:88,showW:false,skin:'#f3d6c4',hair:'#4a3226',pc:''};
@@ -326,9 +359,43 @@ function imgData(file,max=560){return new Promise(res=>{const r=new FileReader()
  const w=c.width,h=c.height,d=x.getImageData(w*.3,h*.3,w*.4,h*.4).data;let t=[0,0,0],n=0;for(let i=0;i<d.length;i+=16){t[0]+=d[i];t[1]+=d[i+1];t[2]+=d[i+2];n++}
  res({url:c.toDataURL('image/jpeg',.78),color:hex(t.map(v=>v/n))})};im.src=r.result};r.readAsDataURL(file)})}
 
+/* ---------- photo cutout (background removal) ---------- */
+let BGM=null;
+const loadImg=b=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(b)});
+function toCanvas(img,max){const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c}
+const avgC=c=>{const d=c.getContext('2d').getImageData(c.width*.3,c.height*.3,c.width*.4,c.height*.4).data;let t=[0,0,0],n=0;for(let i=0;i<d.length;i+=16){t[0]+=d[i];t[1]+=d[i+1];t[2]+=d[i+2];n++}return hex(t.map(v=>v/n))};
+async function makeCutout(file,onp){const src=toCanvas(await loadImg(file),1024);let out;
+ try{onp('切り抜きAIを準備中…（初回だけ少し時間がかかります）');BGM=BGM||await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
+  const blob=await new Promise(r=>src.toBlob(r,'image/jpeg',.92));
+  const res=await BGM.removeBackground(blob,{model:'isnet_quint8',output:{format:'image/png'},progress:(k,c,t)=>onp(k.startsWith('fetch')&&t?`切り抜きAIを読み込み中… ${Math.round(c/t*100)}%`:'背景を切り抜いています…')});
+  out=toCanvas(await loadImg(res),1024)}catch(e){console.warn('AI cutout failed, using simple mode',e);onp('簡易モードで切り抜いています…');out=floodCut(src)}
+ return finishCut(out,src)}
+function floodCut(c){const x=c.getContext('2d'),w=c.width,h=c.height,im=x.getImageData(0,0,w,h),d=im.data,seen=new Uint8Array(w*h),st=[];let r=0,g=0,b=0;
+ for(let X=0;X<w;X++)st.push(X,(h-1)*w+X);for(let Y=0;Y<h;Y++)st.push(Y*w,Y*w+w-1);st.forEach(p=>{r+=d[p*4];g+=d[p*4+1];b+=d[p*4+2]});r/=st.length;g/=st.length;b/=st.length;
+ const near=(i,j)=>(d[i]-d[j])**2+(d[i+1]-d[j+1])**2+(d[i+2]-d[j+2])**2<700;
+ while(st.length){const p=st.pop();if(seen[p])continue;seen[p]=1;const i=p*4;if((d[i]-r)**2+(d[i+1]-g)**2+(d[i+2]-b)**2>9000)continue;d[i+3]=0;const X=p%w;
+  for(const q of[X>0?p-1:-1,X<w-1?p+1:-1,p>=w?p-w:-1,p<w*(h-1)?p+w:-1])if(q>=0&&!seen[q]&&near(i,q*4))st.push(q)}
+ x.putImageData(im,0,0);return c}
+function finishCut(c,src){const w=c.width,h=c.height,cx=c.getContext('2d'),im=cx.getImageData(0,0,w,h),d=im.data;for(let i=3;i<d.length;i+=4){const a=d[i];d[i]=a<90?0:a>190?255:(a-90)*2.55}cx.putImageData(im,0,0);let x0=w,y0=h,x1=0,y1=0,r=0,g=0,b=0,n=0,op=0;
+ for(let y=0;y<h;y+=2)for(let X=0;X<w;X+=2){const i=(y*w+X)*4;if(d[i+3]>40){op++;if(X<x0)x0=X;if(X>x1)x1=X;if(y<y0)y0=y;if(y>y1)y1=y;if(d[i+3]>200){r+=d[i];g+=d[i+1];b+=d[i+2];n++}}}
+ const ratio=op/(w*h/4);if(ratio<.04||ratio>.97||!n){const s=toCanvas(src,640);return{url:s.toDataURL('image/jpeg',.82),color:avgC(s),cut:false}}
+ const cw=x1-x0+2,ch=y1-y0+2,k=Math.min(1,640/Math.max(cw,ch)),o=document.createElement('canvas');o.width=Math.round(cw*k);o.height=Math.round(ch*k);o.getContext('2d').drawImage(c,x0,y0,cw,ch,0,0,o.width,o.height);
+ return{url:o.toDataURL('image/png'),color:hex([r/n,g/n,b/n]),cut:true}}
+function makeTex(){const c=document.createElement('canvas');c.width=c.height=80;const x=c.getContext('2d'),im=x.createImageData(80,80);for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=Math.random()*38}x.putImageData(im,0,0);$('#texImg').setAttribute('href',c.toDataURL())}
+function applyLook(){const a=$('#app'),h=HANGERS[S.hanger&&S.hanger!=='auto'?S.hanger:SKIN_HG[S.skin]],sk=S.profile.skin,hr=S.profile.hair;a.dataset.skin=S.skin;a.style.setProperty('--hgw',h.w);
+ [['hg0',h.c[0]],['hg1',h.c[1]],['hg2',h.c[2]],['sk0',shade(sk,-.1)],['sk1',shade(sk,.07)],['sk2',shade(sk,-.13)],['fk0',shade(sk,.07)],['fk1',shade(sk,-.05)],['hr0',shade(hr,.2)],['hr1',hr],['hr2',shade(hr,-.28)]].forEach(([id,c])=>$('#'+id).setAttribute('stop-color',c))}
+
 /* ---------- SVG drawing ---------- */
 const L=x=>(100-x).toFixed(1),R=x=>(100+x).toFixed(1);
-const F=(d,c)=>`<path d="${d}" fill="${c}" stroke="rgba(0,0,0,.14)" stroke-width=".8"/><path d="${d}" fill="url(#shd)"/>`;
+const F=(d,c)=>`<path d="${d}" fill="${c}" stroke="rgba(0,0,0,.14)" stroke-width=".8"/><path d="${d}" fill="url(#shd)"/><path d="${d}" fill="url(#tex)"/>`;
+// symmetric path: left-side points as [dx,y] offsets from center; right side is mirrored automatically
+function symPath(st,segs){const P=p=>`${L(p[0])},${p[1]}`,Q=p=>`${R(p[0])},${p[1]}`,pts=[st,...segs.map(s=>s[s.length-1])];let d=`M${P(st)}`;
+ segs.forEach(s=>d+=s.length===3?` C${s.map(P).join(' ')}`:` L${P(s[0])}`);d+=` L${Q(pts[pts.length-1])}`;
+ for(let i=segs.length-1;i>=0;i--){const s=segs[i];d+=s.length===3?` C${Q(s[1])} ${Q(s[0])} ${Q(pts[i])}`:` L${Q(pts[i])}`}return d+'Z'}
+function photoOn(x,P){const {S:s,H}=P,t=x.type;let b,al='xMidYMin';
+ switch(x.cat){case'tops':b=[100-(s+17),98,2*(s+17),165];break;case'outer':b=[100-(s+19),96,2*(s+19),t==='coat'?330:178];break;case'dress':b=[100-(H+20),98,2*(H+20),280];break;
+  case'bottoms':b=['pants','wide'].includes(t)?[100-(H+10),186,2*(H+10),300]:[100-(H+22),186,2*(H+22),176];break;case'shoes':b=[74,470,52,34];al='xMidYMax';break;case'bag':b=[100+s-8,248,48,60];break;default:b=[86,100,28,38]}
+ return`<image href="${x.photo}" x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${b[3]}" preserveAspectRatio="${al} meet"/>`}
 const SL=(d,c,w)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="url(#shd)" stroke-width="${w}" stroke-linecap="round"/>`;
 const ln=(d,o=.16,w=1)=>`<path d="${d}" fill="none" stroke="rgba(0,0,0,${o})" stroke-width="${w}" stroke-linecap="round"/>`;
 const sleeves=(P,c,w,end=248)=>[L,R].map(f=>SL(`M${f(P.S-2)},116 Q${f(P.S+8)},188 ${f(P.S+7)},${end}`,c,w)).join('');
@@ -377,27 +444,37 @@ function shelfSVG(it){const c=it.color,dk=shade(c,-.25),lt=shade(c,.35);
  case'eye':return`<rect x="10" y="22" width="60" height="44" rx="6" fill="#2b2b2e"/>`+[lt,c,shade(c,-.2),shade(c,-.45)].map((k,i)=>`<rect x="${16+(i%2)*26}" y="${28+Math.floor(i/2)*18}" width="22" height="14" rx="3" fill="${k}"/>`).join('');
  }return''}
 const VB={tee:[30,58,140,192],blouse:[30,58,140,192],knit:[30,58,140,212],shirt:[30,58,140,212],jacket:[24,58,152,212],coat:[24,58,152,362],dress:[30,58,140,316],skirt:[30,160,140,184],flare:[30,160,140,206],pants:[30,160,140,318],wide:[30,160,140,318]};
-function hangerSVG(it){const P=P0,hook=y=>`<path class="hg" d="M100,${y+34} V${y+16} C100,${y+6} 110,${y+4} 110,${y+12}" fill="none" stroke-width="2.6" stroke-linecap="round"/>`,g=garment(it.type,it.color,P,false);
- if(it.cat!=='bottoms')return hook(60)+`<path class="hg" d="M100,93 L${L(P.S+4)},112 L${R(P.S+4)},112 Z" fill="none" stroke-width="3.5" stroke-linejoin="round"/>`+g;
- return hook(160)+g+`<path class="hg" d="M${L(P.W+9)},188 H${R(P.W+9)}" stroke-width="3.5" stroke-linecap="round"/><rect class="hgf" x="${(100-P.W)-1}" y="184" width="4" height="10" rx="1"/><rect class="hgf" x="${(100+P.W)-3}" y="184" width="4" height="10" rx="1"/>`}
+function hangerSVG(it){const P=P0,hook=y=>`<path class="hk" d="M100,${y+34} V${y+16} C100,${y+6} 110,${y+4} 110,${y+12}" fill="none" stroke-width="2.6" stroke-linecap="round"/>`,g=garment(it.type,it.color,P,false);
+ if(it.cat!=='bottoms')return hook(60)+`<path class="hg hgb" d="M100,92 C92,96 ${L(P.S-6)},104 ${L(P.S+4)},111 Q${L(P.S+7)},113.5 ${L(P.S+3)},114 L${R(P.S+3)},114 Q${R(P.S+7)},113.5 ${R(P.S+4)},111 C${R(P.S-6)},104 108,96 100,92 Z" fill="none" stroke-linejoin="round"/>`+g;
+ return hook(160)+g+`<path class="hg hgb" d="M${L(P.W+9)},188 H${R(P.W+9)}" stroke-width="3.5" stroke-linecap="round"/><rect class="hgf" x="${(100-P.W)-1}" y="184" width="4" height="10" rx="1"/><rect class="hgf" x="${(100+P.W)-3}" y="184" width="4" height="10" rx="1"/>`}
 function itemSVG(it){if(!HANG.includes(it.cat))return`<svg viewBox="0 0 80 80">${shelfSVG(it)}</svg>`;const v=VB[it.type];return`<svg viewBox="${v.join(' ')}" style="--w:${v[2]}">${hangerSVG(it)}</svg>`}
 function bodyType(p){const d=p.hip-p.bust,r=p.waist/p.hip;return BT[r<.72&&Math.abs(d)<=6?'hour':d>6?'pear':d<-3?'apple':'straight']}
 function avatar(o,p,meas){
- const P=bodyP(p),{S:s,B,W,H}=P,sk=p.skin,hr=p.hair,it=k=>o[k]&&getItem(o[k]),wear=k=>{const x=it(k);return x?garment(x.type,x.color,P,true):''},cz=(k,d)=>{const x=it(k);return x?x.color:d};
- const bodyD=`M${L(10)},100 L${L(s)},111 Q${L(s+2)},125 ${L(B)},145 Q${L(B-1)},172 ${L(W)},192 Q${L(W+3)},218 ${L(H)},240 Q${L(H+.5)},262 ${L(H-2)},282 L${L(H*.5+6)},380 L${L(H*.35+4)},490 L${L(5)},490 L${L(3)},380 L${L(1)},276 L${R(1)},276 L${R(3)},380 L${R(5)},490 L${R(H*.35+4)},490 L${R(H*.5+6)},380 L${R(H-2)},282 Q${R(H+.5)},262 ${R(H)},240 Q${R(W+3)},218 ${R(W)},192 Q${R(B-1)},172 ${R(B)},145 Q${R(s+2)},125 ${R(s)},111 L${R(10)},100 Z`;
- const arm=f=>`<path d="M${f(s-4)},118 Q${f(s+6)},188 ${f(s+5)},258" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="${f(s+5)}" cy="265" r="6" fill="${sk}"/>`;
- const ey=cz('eye',null),ch=cz('cheek','#f2b4b0'),lp=cz('lip','#d9918f');
- let g=`<ellipse cx="100" cy="503" rx="44" ry="5" fill="rgba(0,0,0,.13)"/><path d="M71,60 Q67,19 100,18 Q133,19 129,60 L${R(s+1)},152 Q100,166 ${L(s+1)},152 Z" fill="${hr}"/><rect x="93" y="80" width="14" height="26" fill="${sk}"/>`+arm(L)+arm(R)
- +`<path d="${bodyD}" fill="${sk}"/><path d="${bodyD}" fill="url(#shd)" opacity=".5"/>`+[L,R].map(f=>`<ellipse cx="${f(10.5)}" cy="493" rx="7" ry="4.5" fill="${sk}"/>`).join('')
- +`<ellipse cx="75.5" cy="60" rx="3.5" ry="5.5" fill="${sk}"/><ellipse cx="124.5" cy="60" rx="3.5" ry="5.5" fill="${sk}"/><ellipse cx="100" cy="56" rx="24" ry="28.5" fill="${sk}"/>`
+ const P=bodyP(p),{S:s,B,W,H}=P,sk=p.skin,hr=p.hair,it=k=>o[k]&&getItem(o[k]);
+ const wear=k=>{const x=it(k);return x?(x.cut&&x.photo?photoOn(x,P):garment(x.type,x.color,P,true)):''};
+ const cz=(k,d)=>{const x=it(k);return x?x.color:d},both=e=>e+`<g transform="matrix(-1 0 0 1 200 0)">${e}</g>`;
+ const ey=cz('eye',null),ch=cz('cheek','#f0a8a4'),lp=cz('lip','#d98a8c'),line='rgba(110,60,45,';
+ const body=symPath([9,98],[[[12,104],[s-6,106],[s,112]],[[s+3,118],[s+2,132],[B,146]],[[B-1,166],[W+1,180],[W,192]],[[W-1,206],[H,222],[H+.5,242]],[[H+.5,258],[H-1,272],[H-3,290]],[[H-5,330],[H*.5+9,358],[H*.5+6,382]],[[H*.5+8,410],[H*.42+7,446],[H*.35+3.5,484]],[[H*.35+3,492]],[[6.5,492]],[[5.5,468],[3.5,446],[3.5,425]],[[3.5,405],[4.5,392],[4,380]],[[3,340],[1.5,300],[1,278]]]);
+ const arm=`<path d="M${L(s-5)},120 C${L(s+3)},112 ${L(s+8)},122 ${L(s+8)},140 C${L(s+9)},162 ${L(s+8)},176 ${L(s+8)},190 C${L(s+8)},214 ${L(s+7)},236 ${L(s+6.5)},254 C${L(s+8)},262 ${L(s+7)},276 ${L(s+3)},280 C${L(s)},281 ${L(s-1.5)},274 ${L(s)},266 L${L(s+.5)},254 C${L(s+.5)},236 ${L(s+.5)},214 ${L(s+1)},192 C${L(s)},176 ${L(s-2)},160 ${L(s-4)},146 Z" fill="url(#skinG)"/>`;
+ const foot=`<path d="M${L(15)},489 C${L(16)},496 ${L(13)},503 ${L(9)},503 C${L(6)},503 ${L(5.5)},497 ${L(6.5)},489 Z" fill="url(#skinG)"/>`;
+ const eye=`${ey?`<ellipse cx="91" cy="56.3" rx="6.8" ry="3.3" fill="${ey}" opacity=".55" filter="url(#soft)"/>`:''}<path d="M85,59 Q91,54.5 97,59 Q91,62.6 85,59 Z" fill="#fbf8f6"/>`;
+ const lash=`<path d="M84.4,59.2 Q91,53.6 97.6,58.6" stroke="#2a1d18" stroke-width="1.35" fill="none" stroke-linecap="round"/><path d="M84.6,59.1 L82.8,57.4" stroke="#2a1d18" stroke-width="1" stroke-linecap="round"/><path d="M85.6,56.3 Q91,52.3 96.6,56.1" stroke="${line}.35)" stroke-width=".7" fill="none"/><path d="M86.6,60.9 Q91,62.8 95.6,60.8" stroke="rgba(60,30,20,.18)" stroke-width=".6" fill="none"/><path d="M84,51.2 Q89,47.4 96.2,49.4" stroke="${shade(hr,-.1)}" stroke-width="1.7" fill="none" stroke-linecap="round"/><ellipse cx="85" cy="70" rx="6.2" ry="4" fill="${ch}" opacity="${it('cheek')?.55:.35}" filter="url(#soft)"/>`;
+ let g=`<ellipse cx="100" cy="505" rx="46" ry="5" fill="rgba(0,0,0,.14)" filter="url(#soft)"/>`
+ +`<path d="M74,54 C70,30 84,21 100,21 C116,21 130,30 126,54 C128,82 129,112 ${R(s+3)},152 C122,158 112,154 107,144 L93,144 C88,154 78,158 ${L(s+3)},152 C71,112 72,82 74,54 Z" fill="url(#hairG)"/>`
+ +both(arm)+`<path d="M92,74 C92,84 91,92 89,99 L111,99 C109,92 108,84 108,74 Z" fill="url(#skinG)"/>`
+ +`<path d="${body}" fill="url(#skinG)"/>`+both(foot)
+ +`<path d="M92,82 Q100,95 108,82 L108,88 Q100,99 92,88 Z" fill="rgba(80,40,30,.1)"/>`
+ +both(`<path d="M89,103.5 Q94,106 98.5,104.5" stroke="${line}.16)" stroke-width=".9" fill="none"/><path d="M${L(H*.5+2)},377 q3.5,3 7,0" stroke="${line}.12)" fill="none"/>`)
+ +`<ellipse cx="76.5" cy="60" rx="3.2" ry="5.5" fill="${shade(sk,-.06)}"/><ellipse cx="123.5" cy="60" rx="3.2" ry="5.5" fill="${shade(sk,-.06)}"/>`
+ +`<path d="M100,27 C114.5,27 124,38 124,54 C124,66 120.5,74 114,80.5 C109.5,84.5 104.5,87 100,87 C95.5,87 90.5,84.5 86,80.5 C79.5,74 76,66 76,54 C76,38 85.5,27 100,27 Z" fill="url(#faceG)"/>`
  +`<path d="M${L(B-2)},122 Q100,128 ${R(B-2)},122 L${R(W)},192 L${L(W)},192 Z" fill="#efe6dc"/><path d="M${L(W+1)},190 L${R(W+1)},190 Q${R(H+1)},230 ${R(H)},262 L${R(2)},266 L100,262 L${L(2)},266 L${L(H)},262 Q${L(H+1)},230 ${L(W+1)},190 Z" fill="#efe6dc"/>`
  +wear('shoes')+wear('bottoms')+wear('tops')+wear('dress')+wear('outer')+wear('acc')+wear('bag')
- +(ey?`<ellipse cx="91" cy="56.5" rx="5.8" ry="3" fill="${ey}" opacity=".55"/><ellipse cx="109" cy="56.5" rx="5.8" ry="3" fill="${ey}" opacity=".55"/>`:'')
- +`<circle cx="85" cy="69" r="5.5" fill="${ch}" opacity="${it('cheek')?.5:.3}"/><circle cx="115" cy="69" r="5.5" fill="${ch}" opacity="${it('cheek')?.5:.3}"/>`
- +`<ellipse cx="91" cy="60" rx="2.8" ry="3.6" fill="#2b2220"/><ellipse cx="109" cy="60" rx="2.8" ry="3.6" fill="#2b2220"/><circle cx="92" cy="58.6" r=".9" fill="#fff"/><circle cx="110" cy="58.6" r=".9" fill="#fff"/>`
- +`<path d="M86,50 Q91,47.5 95,49.5 M105,49.5 Q109,47.5 114,50" stroke="${hr}" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M100,63 Q101.6,67 99.5,68" stroke="rgba(0,0,0,.18)" fill="none"/>`
- +`<path d="M95,75.5 Q100,73.5 105,75.5 Q100,80.5 95,75.5 Z" fill="${lp}"/>`
- +`<path d="M75,52 Q77,24 100,25 Q124,25 126,54 Q120,36 106,37 Q96,44 75,52 Z" fill="${hr}"/><path d="M77,46 Q70,84 75,116 L82,114 Q78,84 81,52 Z M123,46 Q130,84 125,116 L118,114 Q122,84 119,52 Z" fill="${hr}"/>`;
+ +both(eye)+`<g clip-path="url(#eyeClip)"><circle cx="91" cy="59.2" r="2.9" fill="url(#iris)"/><circle cx="109" cy="59.2" r="2.9" fill="url(#iris)"/></g><circle cx="91" cy="59.4" r="1.25" fill="#160d08"/><circle cx="109" cy="59.4" r="1.25" fill="#160d08"/><circle cx="92.1" cy="58" r=".8" fill="#fff"/><circle cx="110.1" cy="58" r=".8" fill="#fff"/>`
+ +both(lash)+`<path d="M99.6,62.5 C99.2,66 98.4,68.6 99,70.2" stroke="${line}.28)" stroke-width=".8" fill="none"/><path d="M97.6,70.6 Q100,72 102.4,70.6" stroke="${line}.32)" stroke-width=".7" fill="none"/>`
+ +`<path d="M95,76.4 Q97.6,74.5 100,75.6 Q102.4,74.5 105,76.4 Q100,77.4 95,76.4 Z" fill="${shade(lp,-.1)}"/><path d="M95.4,76.6 Q100,77.4 104.6,76.6 Q100,81 95.4,76.6 Z" fill="${lp}"/><ellipse cx="100.6" cy="78.4" rx="1.8" ry=".55" fill="#fff" opacity=".45"/><path d="M95.2,76.5 Q100,77.5 104.8,76.5" stroke="${shade(lp,-.35)}" stroke-width=".5" fill="none"/>`
+ +`<path d="M75.5,57 C73,36 85,24.5 101,24.5 C117,24.5 127,36 124.5,57 C121,45 114,38 104,36.5 C99,45 89,52 75.5,57 Z" fill="url(#hairG)"/>`
+ +both(`<path d="M77,46 C71,70 71,100 80,128 C84,121 85,113 84,104 C81,86 80,66 83,52 Z" fill="url(#hairG)"/>`)
+ +`<path d="M98,27 C90,32 85,40 82,50 M104,27 C112,31 118,38 121,48 M79,70 C78,90 79,108 82,122 M121,70 C122,90 121,108 118,122" stroke="#fff" stroke-opacity=".2" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
  if(meas){const tl=(y,j,v)=>`<path class="ml" d="M${L(H+6)},${y} H-24" stroke-width=".8" stroke-dasharray="2 2"/><text x="-28" y="${y-3}" text-anchor="end" class="mt ms">${j}</text><text x="-28" y="${y+12}" text-anchor="end" class="mt">${v}</text>`;
   g+=tl(145,'バスト',p.bust)+tl(192,'ウエスト',p.waist)+tl(240,'ヒップ',p.hip)+`<path class="ml" d="M232,18 V498 M226,18 H238 M226,498 H238" stroke-width=".9"/><text x="244" y="258" class="mt" text-anchor="middle" transform="rotate(90 244 258)">身長 ${p.height}cm</text>`+(p.showW?`<text x="232" y="12" class="mt ms" text-anchor="middle">体重 ${p.weight}kg</text>`:'')}
  return g}
@@ -409,13 +486,13 @@ function putOn(o,it){const s=slotOf(it);o[s]=it.id;if(s==='dress'){delete o.tops
 const iso=d=>d.toISOString().slice(0,10),daysAgo=n=>iso(new Date(Date.now()-n*864e5));
 const curSeason=(m=new Date().getMonth())=>SO[Math.floor(((m+10)%12)/3)];
 const nextSeason=()=>SO[(SO.indexOf(curSeason())+1)%4];
-function seed(){const A=SO,I=(type,color,name,seasons,care=[])=>({id:uid(),type,cat:TYPES[type].c,color,name,brand:'',seasons,price:'',bought:'',photo:'',tagPhoto:'',care,memo:'',wear:0,last:null});
+function seed(){const A=SO,I=(type,color,name,seasons,care=[])=>({id:uid(),type,cat:TYPES[type].c,color,name,brand:'',seasons,price:'',bought:'',photo:'',tagPhoto:'',care,memo:'',wear:0,last:null,sample:true});
  const items=[I('blouse','#f6f1ea','白ブラウス',['spring','summer','autumn'],['hand','net','shade','ironL']),I('knit','#c7b8e0','ラベンダーニット',['autumn','winter','spring'],['hand','flat','nobleach']),I('knit','#c49a6c','キャメルニット',['autumn','winter'],['dry','flat']),I('tee','#2a2a2e','ブラックT',A,['w30','net']),I('tee','#bfe3d3','ミントT',['spring','summer'],['w30']),I('blouse','#efc4cc','ピンクブラウス',['spring','summer'],['hand','shade']),I('shirt','#a9c8e8','ブルーシャツ',['spring','summer','autumn'],['w40','ironM']),
  I('flare','#e4d3bd','ベージュフレアスカート',['spring','autumn'],['hand']),I('skirt','#26262b','ブラックタイトスカート',A,['dry']),I('pants','#5b7ba3','デニム',A,['w30','notumble']),I('wide','#f2efe8','ホワイトワイドパンツ',['spring','summer'],['w30','net']),I('pants','#8d8f95','グレースラックス',['autumn','winter','spring'],['dry']),
  I('dress','#2e3b5c','ネイビーワンピース',['spring','autumn','winter'],['dry']),I('dress','#a7b89a','セージワンピース',['spring','summer'],['hand','shade']),I('coat','#b8875a','キャメルコート',['winter'],['dry','nowash']),I('coat','#9a9aa0','グレーロングコート',['winter'],['dry']),I('coat','#d2b48c','トレンチコート',['spring','autumn'],['dry']),I('jacket','#2b2b30','ブラックジャケット',['spring','autumn'],['dry']),
  I('shoulder','#2a2a2e','黒ショルダー',A),I('tote','#d9c3a3','ベージュトート',A),I('pumps','#2a2a2e','黒パンプス',A),I('sneaker','#f4f4f4','白スニーカー',A),I('necklace','#d4af37','ゴールドネックレス',A)];
  items.forEach((it,i)=>{it.wear=(i*7)%13;it.last=i%4===0?daysAgo(120+i):daysAgo(i*3+1)});
- const cos=[['lip','#c25b6e','ローズリップ'],['lip','#e7735f','コーラルリップ'],['cheek','#f19cab','ピンクチーク'],['eye','#a57863','ブラウンパレット']].map(([kind,color,name])=>({id:uid(),cat:'cosme',kind,color,name,brand:''}));
+ const cos=[['lip','#c25b6e','ローズリップ'],['lip','#e7735f','コーラルリップ'],['cheek','#f19cab','ピンクチーク'],['eye','#a57863','ブラウンパレット']].map(([kind,color,name])=>({id:uid(),cat:'cosme',kind,color,name,brand:'',sample:true}));
  return{v:1,items,cosme:cos,profile:{...DEFP},skin:'natural',outfit:{tops:items[1].id,bottoms:items[7].id,bag:items[18].id,shoes:items[20].id,acc:items[22].id,lip:cos[0].id,cheek:cos[2].id,eye:cos[3].id},interest:0,onboarded:false,virtual:{}}}
 function similar(type,color,ex){const cat=TYPES[type].c;return S.items.filter(i=>i.id!==ex&&((i.type===type&&cdist(i.color,color)<130)||(i.cat===cat&&i.type!==type&&cdist(i.color,color)<60)))}
 
@@ -427,8 +504,12 @@ function closeSheet(){$('#sheet').classList.remove('on');$('.backdrop').classLis
 const chip=(act,k,n,on)=>`<button class="chip ${on?'on':''}" data-act="${act}" data-k="${k}">${n}</button>`;
 const sortKey=it=>{const {h,s,l}=hsl(it.color);return s<.18?400+(1-l)*100:h};
 const hangSort=(a,b)=>HANG.indexOf(a.cat)-HANG.indexOf(b.cat)||sortKey(a)-sortKey(b);
-const hangHTML=it=>`<div class="hang" data-act="detail" data-id="${it.id}" style="--k:${(.8+(it.id.charCodeAt(0)%9)/20).toFixed(2)}">${itemSVG(it)}</div>`;
-const pk=(it,on,act='detail')=>`<div class="pk ${on?'on':''}${it.virtual?' v':''}" data-act="${act}" data-id="${it.id}">${itemSVG(it)}<span>${it.virtual?'🛍 ':''}${esc(it.name)}</span></div>`;
+const kOf=it=>(.8+(it.id.charCodeAt(0)%9)/20).toFixed(2),PW={tops:116,outer:124,dress:112,bottoms:100};
+const HK='<path class="hk" d="M70,26 V12 C70,3 80,1 80,9" fill="none" stroke-width="2.6" stroke-linecap="round"/>';
+function hangPhoto(it){const bt=it.cat==='bottoms';return`<div class="hang pht${bt?' bt':''}" data-act="detail" data-id="${it.id}" style="--k:${kOf(it)};--pw:${PW[it.cat]}"><svg class="hgr" viewBox="0 0 140 60">${HK}${bt?'<path class="hg hgb" d="M18,34 H122" stroke-linecap="round"/><rect class="hgf" x="28" y="31" width="6" height="11" rx="1.5"/><rect class="hgf" x="106" y="31" width="6" height="11" rx="1.5"/>':'<path class="hg hgb" d="M70,25 C60,29 30,36 14,42 Q9,44.5 15,45 L125,45 Q131,44.5 126,42 C110,36 80,29 70,25 Z" fill="none" stroke-linejoin="round"/>'}</svg><img src="${it.photo}" alt="${esc(it.name)}" draggable="false"></div>`}
+const hangHTML=it=>it.cut&&it.photo?hangPhoto(it):`<div class="hang" data-act="detail" data-id="${it.id}" style="--k:${kOf(it)}">${itemSVG(it)}</div>`;
+const itemVis=it=>it.cut&&it.photo?`<img class="cut" src="${it.photo}" alt="">`:itemSVG(it);
+const pk=(it,on,act='detail')=>`<div class="pk ${on?'on':''}${it.virtual?' v':''}" data-act="${act}" data-id="${it.id}">${itemVis(it)}<span>${it.virtual?'🛍 ':''}${esc(it.name)}</span></div>`;
 function drop(sel){if(G)G.from(sel,{y:-22,opacity:0,stagger:.03,duration:.5,ease:'back.out(1.7)',clearProps:'opacity,transform'})}
 
 /* ---------- views ---------- */
@@ -438,7 +519,7 @@ function renderCloset(){
  const ok=i=>fSea==='all'||i.seasons.includes(fSea);
  const hang=S.items.filter(i=>HANG.includes(i.cat)&&(fCat==='all'||i.cat===fCat)&&ok(i)).sort(hangSort);
  $('#rail').innerHTML=hang.map(hangHTML).join('')||'<p class="empty">該当する服がありません</p>';
- $('#shelf').innerHTML=S.items.filter(i=>!HANG.includes(i.cat)&&ok(i)).map(i=>`<div class="it" data-act="detail" data-id="${i.id}"><svg viewBox="0 0 80 80">${shelfSVG(i)}</svg></div>`).join('');
+ $('#shelf').innerHTML=S.items.filter(i=>!HANG.includes(i.cat)&&ok(i)).map(i=>`<div class="it" data-act="detail" data-id="${i.id}">${i.cut&&i.photo?`<img src="${i.photo}" alt="">`:`<svg viewBox="0 0 80 80">${shelfSVG(i)}</svg>`}</div>`).join('');
  $('#vanity').innerHTML=S.cosme.map(i=>`<div class="it" data-act="detail" data-id="${i.id}"><svg viewBox="0 0 80 80">${shelfSVG(i)}</svg></div>`).join('');
  $('#count').textContent=`全${S.items.length+S.cosme.length}点`;
 }
@@ -472,7 +553,8 @@ function renderMe(){const p=S.profile;
  $('#pcCards').innerHTML=Object.entries(PC).map(([k,x])=>`<button class="pcc ${p.pc===k?'on':''}" data-act="pcSet" data-k="${k}">${x.n}<div class="dots">${x.c.slice(0,6).map(c=>`<i style="background:${c[1]}"></i>`).join('')}</div></button>`).join('');
  $('#skinBox').innerHTML=skinsHTML();meAv()}
 function meAv(){$('#meAv').innerHTML=avatar(S.outfit,S.profile,false);const b=bodyType(S.profile);$('#meType').innerHTML=`<b>${b[0]}</b><br>${b[1]}`}
-function skinsHTML(){const cols=['#c7b8e0','#e4d3bd','#2e3b5c','#efc4cc'];return`<div class="skins">${Object.entries(SKINS).map(([k,s])=>`<button class="skin ${S.skin===k?'on':''}" data-act="skin" data-k="${k}"><span class="sk-prev" data-skin="${k}"><i></i>${cols.map((c,j)=>`<b style="left:${12+j*20}px;background:${c};height:${30+j%2*10}px"></b>`).join('')}</span>${s.n}${s.p?'<em>プレミアム</em>':''}</button>`).join('')}</div>`}
+function skinsHTML(){const cur=S.hanger||'auto';return skinGrid()+`<p class="fl" style="margin-top:16px">ハンガー</p><div class="hgs">${Object.entries(HANGERS).map(([k,h])=>`<button class="hgc ${cur===k?'on':''}" data-act="hanger" data-k="${k}"><i style="background:${h.c?`linear-gradient(180deg,${h.c[0]},${h.c[1]} 60%,${h.c[2]})`:'conic-gradient(#d4a373,#e9c76a,#d6d6da,#e094a8,#d4a373)'}"></i>${h.n}${h.p?'<em>プレミアム</em>':''}</button>`).join('')}</div>`}
+function skinGrid(){const cols=['#c7b8e0','#e4d3bd','#2e3b5c','#efc4cc'];return`<div class="skins">${Object.entries(SKINS).map(([k,s])=>`<button class="skin ${S.skin===k?'on':''}" data-act="skin" data-k="${k}"><span class="sk-prev" data-skin="${k}"><i></i>${cols.map((c,j)=>`<b style="left:${12+j*20}px;background:${c};height:${30+j%2*10}px"></b>`).join('')}</span>${s.n}${s.p?'<em>プレミアム</em>':''}</button>`).join('')}</div>`}
 /* ---------- styling (personal color × scene) ---------- */
 const PC={spring:{n:'イエベ春',d:'明るく澄んだ暖かい色が得意。コーラルやピーチで血色アップ。',c:[['コーラルピンク','#f4a29a'],['ピーチ','#f9c1a0'],['アイボリー','#f8f0dc'],['ライトキャメル','#d8a874'],['イエローグリーン','#b8d27a'],['ターコイズ','#48c1c0'],['クリアイエロー','#f6d55c'],['ライトベージュ','#ead7bd']]},
  summer:{n:'ブルベ夏',d:'やわらかく涼しげなパステルが得意。ラベンダーやローズが◎。',c:[['ラベンダー','#c7b8e0'],['ローズピンク','#e7a9bb'],['スカイブルー','#a9c8e8'],['ミントグリーン','#bfe3d3'],['ライトグレー','#c9cbd1'],['オフホワイト','#f3f1ee'],['ネイビーグレー','#5c6a84'],['スモーキーブルー','#8aa0b8']]},
@@ -529,7 +611,7 @@ function go(v){cur=v;$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+
 /* ---------- detail / form ---------- */
 function openDetail(id){const it=getItem(id);if(!it)return;const C=it.cat==='cosme';
  const cpw=it.price&&it.wear?`¥${Math.round(it.price/it.wear).toLocaleString()}`:'—';
- openSheet(`<div class="d-vis">${itemSVG(it)}${it.photo?`<img src="${it.photo}" alt="">`:''}</div>
+ openSheet(`<div class="d-vis">${itemVis(it)}${it.photo&&!it.cut?`<img src="${it.photo}" alt="">`:''}</div>
  <h3 class="sh-title" style="margin-top:12px">${esc(it.name)}</h3><p class="muted">${C?COSME[it.kind]:TYPES[it.type].n}${it.brand?' ・ '+esc(it.brand):''} ・ ${cname(it.color)}</p>
  ${C?'':`<div class="d-meta">${SO.map(k=>`<span class="chip sm ${it.seasons.includes(k)?'on':''}">${SEASONS[k]}</span>`).join('')}</div>
  <div class="kv"><div><b>${it.wear||0}</b><span>着用回数</span></div><div><b>${it.last?it.last.slice(5).replace('-','/'):'—'}</b><span>最後に着た日</span></div><div><b>${cpw}</b><span>1回あたり</span></div></div>
@@ -544,7 +626,7 @@ function drawForm(){const f=FM,C=f._c;
   :`<select id="f-type">${Object.entries(CATS).map(([c,cn])=>`<optgroup label="${cn}">${Object.entries(TYPES).filter(([,t])=>t.c===c).map(([k,t])=>`<option value="${k}" ${f.type===k?'selected':''}>${t.n}</option>`).join('')}</optgroup>`).join('')}</select>`;
  openSheet(`<h3 class="sh-title">${f._new?'アイテムを追加':'アイテムを編集'}</h3>
  ${f._new?`<div class="seg"><button class="${C?'':'on'}" data-act="fKind" data-k="0">服・小物</button><button class="${C?'on':''}" data-act="fKind" data-k="1">コスメ</button></div>`:''}
- ${C?'':`<div class="ph-row"><label class="ph" id="phMain">${f.photo?`<img src="${f.photo}">`:'<span>📷 服を撮る</span>'}<input type="file" accept="image/*" id="f-photo" hidden></label><label class="ph" id="phTag">${f.tagPhoto?`<img src="${f.tagPhoto}">`:'<span>🏷 洗濯タグを撮る</span>'}<input type="file" accept="image/*" id="f-tag" hidden></label></div><p class="muted" style="margin-top:6px">写真から色を自動で読み取ります。タグは消える前に撮っておくと安心。</p>`}
+ ${C?'':`<div class="ph-row"><label class="ph" id="phMain">${f.photo?`<img src="${f.photo}">`:'<span>📷 服を撮る</span>'}<input type="file" accept="image/*" id="f-photo" hidden></label><label class="ph" id="phTag">${f.tagPhoto?`<img src="${f.tagPhoto}">`:'<span>🏷 洗濯タグを撮る</span>'}<input type="file" accept="image/*" id="f-tag" hidden></label></div><p class="muted" style="margin-top:6px">背景を自動で切り抜いて、ハンガーに掛けます。服をハンガーに掛けて、無地の壁の前で撮るとキレイに仕上がります。タグは消える前に撮っておくと安心。</p><div id="procMsg"></div>`}
  <div class="f-prev" id="fPrev" style="margin-top:12px"></div>
  <label class="fl">種類${sel}</label>
  <div class="fl">色<div class="sw">${SW.map(c=>`<button class="swc ${f.color===c?'on':''}" style="background:${c}" data-act="fColor" data-c="${c}"></button>`).join('')}<input type="color" id="f-color" value="${f.color}"></div></div>
@@ -558,7 +640,7 @@ function drawForm(){const f=FM,C=f._c;
  <button class="btn accent wide" data-act="fSave">クローゼットにしまう</button>`);updPrev()}
 function readForm(){const v=id=>$('#'+id)?.value;if(!FM)return;if(FM._c)FM.kind=v('f-kind');else{FM.type=v('f-type');FM.price=v('f-price');FM.bought=v('f-bought');FM.memo=v('f-memo')}FM.name=v('f-name');FM.brand=v('f-brand');setColor(v('f-color'))}
 function setColor(c){if(!c||!FM)return;FM.color=c;$$('#sheet .swc').forEach(b=>b.classList.toggle('on',b.dataset.c===c));if($('#f-color'))$('#f-color').value=c;updPrev()}
-function updPrev(){const f=FM;if(!f||!$('#fPrev'))return;const it={...f,cat:f._c?'cosme':TYPES[f.type].c};$('#fPrev').innerHTML=itemSVG(it);
+function updPrev(){const f=FM;if(!f||!$('#fPrev'))return;const it={...f,cat:f._c?'cosme':TYPES[f.type].c};$('#fPrev').innerHTML=itemVis(it);
  if(f._c)return;const sim=similar(f.type,f.color,f.id);$('#simBox').innerHTML=sim.length?`<div class="warn"><b>⚠ 似たアイテムを${sim.length}点持っています</b><div class="mlist">${sim.map(i=>pk(i,false,'x')).join('')}</div><span class="muted">「また同じの買っちゃった」を防止</span></div>`:''}
 
 /* ---------- swing physics ---------- */
@@ -581,7 +663,7 @@ const ACT={
  edit:el=>openForm(el.dataset.id),
  del:el=>{if(!confirm('このアイテムを削除しますか？'))return;const id=el.dataset.id;S.items=S.items.filter(i=>i.id!==id);S.cosme=S.cosme.filter(i=>i.id!==id);for(const k in S.outfit)if(S.outfit[k]===id)delete S.outfit[k];save();closeSheet();renderAll();toast('削除しました')},
  skins:()=>{$('#skinBtn').classList.remove('pulse');openSheet(`<h3 class="sh-title">クローゼットの見た目</h3><p class="muted" style="margin-bottom:10px">気分に合わせて、自分好みのクローゼットに。</p>${skinsHTML()}`)},
- skin:el=>{S.skin=el.dataset.k;save();$('#app').dataset.skin=S.skin;$$('.skin').forEach(b=>b.classList.toggle('on',b.dataset.k===S.skin));if(SKINS[S.skin].p)toast('プレミアムスキンを試着中（今だけ無料）');if(cur==='closet'){closeSheet();openDoors()}},
+ skin:el=>{S.skin=el.dataset.k;save();applyLook();$$('.skin').forEach(b=>b.classList.toggle('on',b.dataset.k===S.skin));if(SKINS[S.skin].p)toast('プレミアムスキンを試着中（今だけ無料）');if(cur==='closet'){closeSheet();openDoors()}},
  cat:el=>{fCat=el.dataset.k;renderCloset();drop('#rail .hang')},
  sea:el=>{fSea=el.dataset.k;renderCloset();drop('#rail .hang')},
  slot:el=>{dSlot=el.dataset.k;renderDress()},
@@ -590,15 +672,18 @@ const ACT={
  wearToday:()=>{const t=iso(new Date());let n=0;Object.values(S.outfit).forEach(id=>{const it=S.items.find(i=>i.id===id);if(it&&it.last!==t){it.wear=(it.wear||0)+1;it.last=t;n++}});save();toast(n?`今日のコーデを記録しました（${n}点）`:'今日はもう記録済みです')},
  sSea:el=>{sSea=el.dataset.k;renderSeason();drop('#sRail .hang')},
  check:()=>{const t=$('#c-type').value,c=$('#c-color').value,sim=similar(t,c);$('#checkRes').innerHTML=sim.length?`<div class="warn"><b>ちょっと待って！似た服を${sim.length}点持っています</b><div class="mlist hs" style="padding-left:0">${sim.map(i=>pk(i,false)).join('')}</div></div>`:`<div class="ok"><b>似た服は持っていません。</b><br>新しい仲間としてお迎えOK！</div>`},
- pcol:el=>{S.profile[el.dataset.k]=el.dataset.c;save();renderMe()},
+ pcol:el=>{S.profile[el.dataset.k]=el.dataset.c;save();applyLook();renderMe()},
+ hanger:el=>{S.hanger=el.dataset.k;save();applyLook();$$('.hgc').forEach(b=>b.classList.toggle('on',b.dataset.k===S.hanger));if(HANGERS[S.hanger].p)toast('プレミアムハンガーを試着中（今だけ無料）');kick('#rail',4)},
+ clearSamples:()=>{if(!confirm('サンプルの服とコスメを消しますか？（自分で追加したものは残ります）'))return;const ref=seed(),N=new Set([...ref.items,...ref.cosme].map(i=>i.name)),isS=i=>i.sample||(!i.photo&&N.has(i.name));
+  S.items=S.items.filter(i=>!isS(i));S.cosme=S.cosme.filter(i=>!isS(i));for(const k in S.outfit)if(!getItem(S.outfit[k]))delete S.outfit[k];PROPS=[];save();renderAll();toast('サンプルを消しました')},
  interest:()=>{S.interest=(S.interest||0)+1;save();toast('「使ってみたい」を記録しました（準備中の機能です）')},
  export:()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download=`closette-backup-${iso(new Date())}.json`;a.click()},
- reset:()=>{if(!confirm('すべてのデータを消してサンプルに戻しますか？'))return;S=seed();S.onboarded=true;save();$('#app').dataset.skin=S.skin;renderAll();toast('初期化しました')},
+ reset:()=>{if(!confirm('すべてのデータを消してサンプルに戻しますか？'))return;S=seed();S.onboarded=true;save();applyLook();renderAll();toast('初期化しました')},
  fKind:el=>{FM={...blank(el.dataset.k==='1'),_c:el.dataset.k==='1',_new:true};drawForm()},
  fColor:el=>setColor(el.dataset.c),
  fSea:el=>{const k=el.dataset.k,a=FM.seasons;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);el.classList.toggle('on')},
  fCare:el=>{const k=el.dataset.k,a=FM.care;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);el.classList.toggle('on')},
- fSave:()=>{readForm();const f=FM,isNew=f._new;let o;
+ fSave:()=>{if(FM._busy)return toast('切り抜きが終わるまで少しお待ちください');readForm();const f=FM,isNew=f._new;let o;
   if(f._c){o={id:f.id||uid(),cat:'cosme',kind:f.kind,color:f.color,name:f.name||cname(f.color)+'の'+COSME[f.kind],brand:f.brand};const i=S.cosme.findIndex(x=>x.id===o.id);i<0?S.cosme.push(o):S.cosme[i]=o}
   else{o={...f,id:f.id||uid(),cat:TYPES[f.type].c,name:f.name||cname(f.color)+'の'+TYPES[f.type].n,wear:f.wear||0,last:f.last||null};delete o._c;delete o._new;if(!o.seasons.length)o.seasons=[...SO];const i=S.items.findIndex(x=>x.id===o.id);i<0?S.items.push(o):S.items[i]=o}
   save();closeSheet();fCat='all';fSea='all';renderAll();toast(isNew?'クローゼットにしまいました':'更新しました');
@@ -619,13 +704,18 @@ document.addEventListener('input',e=>{const t=e.target;if(t.closest('#sheet'))re
  if(t.dataset.p){S.profile[t.dataset.p]=t.type==='checkbox'?t.checked:(+t.value||S.profile[t.dataset.p]);save();meAv()}
  if(t.id==='c-color')$('#cColTxt').textContent=cname(t.value)});
 document.addEventListener('change',async e=>{const t=e.target;
- if((t.id==='f-photo'||t.id==='f-tag')&&t.files[0]&&FM){const d=await imgData(t.files[0]);if(t.id==='f-photo'){FM.photo=d.url;$('#phMain').innerHTML=`<img src="${d.url}"><input type="file" accept="image/*" id="f-photo" hidden>`;setColor(d.color);toast(`色を読み取りました：${cname(d.color)}`)}else{FM.tagPhoto=d.url;$('#phTag').innerHTML=`<img src="${d.url}"><input type="file" accept="image/*" id="f-tag" hidden>`}}
+ if(t.id==='f-tag'&&t.files[0]&&FM){const d=await imgData(t.files[0]);FM.tagPhoto=d.url;$('#phTag').innerHTML=`<img src="${d.url}"><input type="file" accept="image/*" id="f-tag" hidden>`}
+ if(t.id==='f-photo'&&t.files[0]&&FM){const f=t.files[0],fm=FM,inp='<input type="file" accept="image/*" id="f-photo" hidden>';fm._busy=true;
+  $('#phMain').innerHTML=`<img src="${URL.createObjectURL(f)}" style="opacity:.45">${inp}`;$('#procMsg').innerHTML='<div class="proc">背景を切り抜いています…</div>';
+  const d=await makeCutout(f,m=>{const e=$('#procMsg .proc');if(e)e.textContent=m});fm._busy=false;if(FM!==fm)return;
+  FM.photo=d.url;FM.cut=d.cut;$('#phMain').innerHTML=`<img src="${d.url}" style="object-fit:contain;background:#f4efe9">${inp}`;$('#procMsg').innerHTML='';setColor(d.color);
+  toast(d.cut?`切り抜き完了・色：${cname(d.color)}`:'うまく切り抜けなかったので、写真をそのまま使います')}
  if(t.id==='c-photo'&&t.files[0]){const d=await imgData(t.files[0],300);$('#c-color').value=d.color;$('#cColTxt').textContent=cname(d.color);$('#cPh').innerHTML=`<img src="${d.url}"><input type="file" accept="image/*" id="c-photo" hidden>`}
- if(t.id==='importF'&&t.files[0]){try{const d=JSON.parse(await t.files[0].text());if(!d.items)throw 0;S=d;S.virtual=S.virtual||{};S.outfit=S.outfit||{};S.profile={...DEFP,...S.profile};save();$('#app').dataset.skin=S.skin;renderAll();toast('復元しました')}catch(_){toast('ファイルを読み込めませんでした')}t.value=''}});
+ if(t.id==='importF'&&t.files[0]){try{const d=JSON.parse(await t.files[0].text());if(!d.items)throw 0;S=d;S.virtual=S.virtual||{};S.outfit=S.outfit||{};S.profile={...DEFP,...S.profile};save();applyLook();renderAll();toast('復元しました')}catch(_){toast('ファイルを読み込めませんでした')}t.value=''}});
 
 /* ---------- boot ---------- */
 (async()=>{let d=null;try{d=await DB.get('state')}catch(_){}S=d&&d.items?d:seed();S.profile={...DEFP,...S.profile};S.outfit=S.outfit||{};S.virtual=S.virtual||{};
- $('#app').dataset.skin=S.skin;renderAll();go('closet');['#rail','#sRail','#shelf','#vanity','#picker'].forEach(s=>dragScroll($(s)));requestAnimationFrame(swing);openDoors();if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+ makeTex();applyLook();renderAll();go('closet');['#rail','#sRail','#shelf','#vanity','#picker'].forEach(s=>dragScroll($(s)));requestAnimationFrame(swing);openDoors();if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
  if(!S.onboarded)setTimeout(()=>openSheet(`<div class="onb"><p class="jt" style="color:var(--accent)">Closetteへようこそ</p><h3>開けるたび、<br>主役のクローゼット。</h3><ol><li>ハンガーをスワイプして服をながめる</li><li>右上のパレットで<b>クローゼットの見た目</b>を変える</li><li>今日の1着を撮って、ハンガーに掛ける</li></ol><p class="muted">いまはサンプルの服が入っています。</p><button class="btn accent wide" data-act="onbShot">📷 今日の1着を撮ってみる</button><button class="btn ghost wide" data-act="onbLater">先にながめる</button></div>`),2100)})();
 </script>
 </body>
