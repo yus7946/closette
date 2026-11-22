@@ -59,7 +59,8 @@ h2.title .en{font-size:16px;color:var(--muted)}
 [data-skin=gorgeous] .stage{box-shadow:inset 0 0 0 3px #c99a3a,inset 0 0 0 6px #5a1624,0 12px 30px rgba(60,20,30,.3)}
 [data-skin=night] .rail-bar{box-shadow:0 8px 22px rgba(255,180,100,.55)}
 .stage-head{display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px 0;color:var(--lab)}
-.stage-head .en{font-size:20px}
+.jt{font-family:'Shippori Mincho',serif;letter-spacing:.06em}
+.stage-head .jt{font-size:16px}
 .stage-head span:last-child{font-size:11px;letter-spacing:.1em}
 .rail-wrap{position:relative}
 .rail-bar{position:absolute;top:18px;left:0;right:0;height:8px;background:var(--rail);box-shadow:0 3px 6px rgba(0,0,0,.2);border-radius:4px}
@@ -71,7 +72,7 @@ h2.title .en{font-size:16px;color:var(--muted)}
 .rail.mini .hang svg{width:calc(var(--w)*.5px)}
 .rail.mini .hang{margin-right:-10px}
 .rail.mini{padding-top:10px}
-.sub{color:var(--lab);font-size:15px;padding:2px 18px}
+.sub{color:var(--lab);font-size:13px;padding:2px 18px}
 .shelf-wrap{position:relative;padding-bottom:12px;margin-bottom:6px}
 .shelf-wrap::after{content:'';position:absolute;left:0;right:0;bottom:4px;height:10px;background:var(--shelf);box-shadow:0 5px 8px rgba(0,0,0,.16)}
 .shelf{display:flex;gap:10px;overflow-x:auto;padding:4px 22px 0;align-items:flex-end;scrollbar-width:none}
@@ -89,8 +90,8 @@ h2.title .en{font-size:16px;color:var(--muted)}
 .av-stage{position:relative;margin:6px 12px 0;border-radius:24px;background:var(--wall);height:min(58vh,500px);display:flex;justify-content:center;align-items:flex-end;overflow:hidden;isolation:isolate}
 .av-stage::before{content:'';position:absolute;left:15%;right:15%;top:-30px;height:70%;background:radial-gradient(closest-side,var(--glow),transparent);z-index:-1}
 #avatar{height:calc(96% * var(--hs,1));width:auto;max-width:100%}
-.mt{font-family:'Cormorant Garamond',serif;font-size:14px;fill:var(--lab);font-weight:600;letter-spacing:.04em}
-.ml{stroke:var(--lab);fill:none;opacity:.6}
+.mt{font-family:'Cormorant Garamond','Zen Kaku Gothic New',serif;font-size:14px;fill:var(--lab);font-weight:600;letter-spacing:.04em}
+.ml{stroke:var(--lab);fill:none;opacity:.6}.ms{font-size:10px;font-weight:500}
 .btype{font-size:12px;color:var(--muted);text-align:center;padding:8px 18px 0}
 .btype b{color:var(--ink)}
 .hs{display:flex;gap:10px;overflow-x:auto;padding:6px 18px 14px;scrollbar-width:none}
@@ -169,7 +170,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
 .onb ol{margin:0 0 10px 20px;font-size:14px;line-height:2}
 .prop{background:var(--surface);border:1px solid var(--line);border-radius:22px;margin:12px;padding:14px}
 .prop-h{display:flex;justify-content:space-between;align-items:baseline}
-.prop-h .en{font-size:22px;color:var(--accent)}.prop-h b{font-size:12px;font-weight:500;color:var(--muted)}
+.prop-h .jt{font-size:17px;color:var(--accent)}.prop-h b{font-size:12px;font-weight:500;color:var(--muted)}
 .ba{display:flex;align-items:center;justify-content:center;gap:4px;margin:8px 0;background:var(--wall);border-radius:18px;padding:10px 6px 6px}
 .ba figure{text-align:center}.ba svg{height:220px;width:auto}
 .ba figcaption{font-size:10px;color:var(--lab);letter-spacing:.08em}
@@ -205,11 +206,11 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
       <div class="chips" id="catChips"></div>
       <div class="chips" id="seaChips"></div>
       <div class="stage">
-        <div class="stage-head"><span class="en">My Closet</span><span id="count"></span></div>
+        <div class="stage-head"><span class="jt">わたしのクローゼット</span><span id="count"></span></div>
         <div class="rail-wrap"><div class="rail-bar"></div><div class="rail" id="rail"></div></div>
-        <div class="sub en">Bags · Shoes · Accessories</div>
+        <div class="sub jt">バッグ・シューズ・アクセサリー</div>
         <div class="shelf-wrap"><div class="shelf hs" id="shelf"></div></div>
-        <div class="sub en">Vanity</div>
+        <div class="sub jt">ドレッサー</div>
         <div class="shelf-wrap"><div class="shelf hs" id="vanity"></div></div>
         <div class="doors"><i></i><i></i></div>
       </div>
@@ -217,7 +218,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
     </section>
 
     <section class="view" id="v-dress">
-      <h2 class="title">着せ替え <span class="en">Dress up</span></h2>
+      <h2 class="title">着せ替え</h2>
       <div class="av-stage"><svg id="avatar" viewBox="-75 6 350 505"></svg></div>
       <p class="btype" id="btype"></p>
       <div id="vbar"></div>
@@ -227,7 +228,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
     </section>
 
     <section class="view" id="v-style">
-      <h2 class="title">コーデ提案 <span class="en">Styling</span></h2>
+      <h2 class="title">コーデ提案</h2>
       <p class="lead">手持ちの服から、シーンとパーソナルカラーに合わせて提案。「あと1着」も見つかります。</p>
       <div class="chips" id="sceneChips"></div>
       <div id="pcBanner"></div>
@@ -237,7 +238,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
     </section>
 
     <section class="view" id="v-season">
-      <h2 class="title">衣替え・ダブりチェック <span class="en">Season</span></h2>
+      <h2 class="title">衣替え・ダブりチェック</h2>
       <p class="lead">「何持ってたっけ？」をゼロに。ダブり買い、もうしない。</p>
       <div class="chips" id="sSeaChips"></div>
       <p class="big-stat" id="bigStat"></p>
@@ -255,7 +256,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
     </section>
 
     <section class="view" id="v-me">
-      <h2 class="title">マイページ <span class="en">Me</span></h2>
+      <h2 class="title">マイページ</h2>
       <div class="card"><h3>マイ体型</h3>
         <div class="me-top"><svg id="meAv" viewBox="28 10 144 500"></svg><div style="flex:1"><p class="muted">アバターに反映されます。数字はこの端末の中だけに保存されます。</p><p class="btype" id="meType" style="text-align:left;padding:8px 0 0"></p></div></div>
         <div class="nums" id="nums" style="margin-top:12px"></div>
@@ -265,7 +266,7 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
       </div>
       <div class="card"><h3>パーソナルカラー</h3><div class="pcs" id="pcCards"></div><button class="btn ghost wide" data-act="diag">30秒でかんたん診断</button></div>
       <div class="card"><h3>クローゼットの見た目</h3><div id="skinBox"></div></div>
-      <div class="card prem"><h3>Closette PREMIUM（準備中）</h3>
+      <div class="card prem"><h3>Closette プレミアム（準備中）</h3>
         <ul><li>AIスタイリストにチャットで相談（「明日のデート何着る？」）</li><li>プロのスタイリストに相談</li><li>限定クローゼットスキン</li></ul>
         <button class="btn accent wide" data-act="interest">使ってみたい！</button></div>
       <div class="card"><h3>データ</h3><p class="muted">データはこの端末のブラウザ内に保存されます。機種変更前にバックアップを。</p>
@@ -397,8 +398,8 @@ function avatar(o,p,meas){
  +`<path d="M86,50 Q91,47.5 95,49.5 M105,49.5 Q109,47.5 114,50" stroke="${hr}" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M100,63 Q101.6,67 99.5,68" stroke="rgba(0,0,0,.18)" fill="none"/>`
  +`<path d="M95,75.5 Q100,73.5 105,75.5 Q100,80.5 95,75.5 Z" fill="${lp}"/>`
  +`<path d="M75,52 Q77,24 100,25 Q124,25 126,54 Q120,36 106,37 Q96,44 75,52 Z" fill="${hr}"/><path d="M77,46 Q70,84 75,116 L82,114 Q78,84 81,52 Z M123,46 Q130,84 125,116 L118,114 Q122,84 119,52 Z" fill="${hr}"/>`;
- if(meas){const tl=(y,lab)=>`<path class="ml" d="M${L(H+6)},${y} H-24" stroke-width=".8" stroke-dasharray="2 2"/><text x="-28" y="${y+4}" text-anchor="end" class="mt">${lab}</text>`;
-  g+=tl(145,`B ${p.bust}`)+tl(192,`W ${p.waist}`)+tl(240,`H ${p.hip}`)+`<path class="ml" d="M232,18 V498 M226,18 H238 M226,498 H238" stroke-width=".9"/><text x="244" y="258" class="mt" text-anchor="middle" transform="rotate(90 244 258)">${p.height} cm</text>`+(p.showW?`<text x="232" y="12" class="mt" text-anchor="middle">${p.weight} kg</text>`:'')}
+ if(meas){const tl=(y,j,v)=>`<path class="ml" d="M${L(H+6)},${y} H-24" stroke-width=".8" stroke-dasharray="2 2"/><text x="-28" y="${y-3}" text-anchor="end" class="mt ms">${j}</text><text x="-28" y="${y+12}" text-anchor="end" class="mt">${v}</text>`;
+  g+=tl(145,'バスト',p.bust)+tl(192,'ウエスト',p.waist)+tl(240,'ヒップ',p.hip)+`<path class="ml" d="M232,18 V498 M226,18 H238 M226,498 H238" stroke-width=".9"/><text x="244" y="258" class="mt" text-anchor="middle" transform="rotate(90 244 258)">身長 ${p.height}cm</text>`+(p.showW?`<text x="232" y="12" class="mt ms" text-anchor="middle">体重 ${p.weight}kg</text>`:'')}
  return g}
 
 /* ---------- data ---------- */
@@ -439,7 +440,7 @@ function renderCloset(){
  $('#rail').innerHTML=hang.map(hangHTML).join('')||'<p class="empty">該当する服がありません</p>';
  $('#shelf').innerHTML=S.items.filter(i=>!HANG.includes(i.cat)&&ok(i)).map(i=>`<div class="it" data-act="detail" data-id="${i.id}"><svg viewBox="0 0 80 80">${shelfSVG(i)}</svg></div>`).join('');
  $('#vanity').innerHTML=S.cosme.map(i=>`<div class="it" data-act="detail" data-id="${i.id}"><svg viewBox="0 0 80 80">${shelfSVG(i)}</svg></div>`).join('');
- $('#count').textContent=`${S.items.length+S.cosme.length} ITEMS`;
+ $('#count').textContent=`全${S.items.length+S.cosme.length}点`;
 }
 const SLOTS=[['tops','トップス'],['bottoms','ボトムス'],['dress','ワンピ'],['outer','アウター'],['bag','バッグ'],['shoes','シューズ'],['acc','アクセ'],['lip','リップ'],['cheek','チーク'],['eye','アイ']];
 function renderAvatar(){const p=S.profile;$('#avatar').style.setProperty('--hs',Math.min(1.06,Math.max(.9,p.height/160)).toFixed(3));$('#avatar').innerHTML=avatar(S.outfit,p,true);const b=bodyType(p);$('#btype').innerHTML=`体型バランス <b>${b[0]}</b> ・ ${b[1]}`}
@@ -471,7 +472,7 @@ function renderMe(){const p=S.profile;
  $('#pcCards').innerHTML=Object.entries(PC).map(([k,x])=>`<button class="pcc ${p.pc===k?'on':''}" data-act="pcSet" data-k="${k}">${x.n}<div class="dots">${x.c.slice(0,6).map(c=>`<i style="background:${c[1]}"></i>`).join('')}</div></button>`).join('');
  $('#skinBox').innerHTML=skinsHTML();meAv()}
 function meAv(){$('#meAv').innerHTML=avatar(S.outfit,S.profile,false);const b=bodyType(S.profile);$('#meType').innerHTML=`<b>${b[0]}</b><br>${b[1]}`}
-function skinsHTML(){const cols=['#c7b8e0','#e4d3bd','#2e3b5c','#efc4cc'];return`<div class="skins">${Object.entries(SKINS).map(([k,s])=>`<button class="skin ${S.skin===k?'on':''}" data-act="skin" data-k="${k}"><span class="sk-prev" data-skin="${k}"><i></i>${cols.map((c,j)=>`<b style="left:${12+j*20}px;background:${c};height:${30+j%2*10}px"></b>`).join('')}</span>${s.n}${s.p?'<em>PREMIUM</em>':''}</button>`).join('')}</div>`}
+function skinsHTML(){const cols=['#c7b8e0','#e4d3bd','#2e3b5c','#efc4cc'];return`<div class="skins">${Object.entries(SKINS).map(([k,s])=>`<button class="skin ${S.skin===k?'on':''}" data-act="skin" data-k="${k}"><span class="sk-prev" data-skin="${k}"><i></i>${cols.map((c,j)=>`<b style="left:${12+j*20}px;background:${c};height:${30+j%2*10}px"></b>`).join('')}</span>${s.n}${s.p?'<em>プレミアム</em>':''}</button>`).join('')}</div>`}
 /* ---------- styling (personal color × scene) ---------- */
 const PC={spring:{n:'イエベ春',d:'明るく澄んだ暖かい色が得意。コーラルやピーチで血色アップ。',c:[['コーラルピンク','#f4a29a'],['ピーチ','#f9c1a0'],['アイボリー','#f8f0dc'],['ライトキャメル','#d8a874'],['イエローグリーン','#b8d27a'],['ターコイズ','#48c1c0'],['クリアイエロー','#f6d55c'],['ライトベージュ','#ead7bd']]},
  summer:{n:'ブルベ夏',d:'やわらかく涼しげなパステルが得意。ラベンダーやローズが◎。',c:[['ラベンダー','#c7b8e0'],['ローズピンク','#e7a9bb'],['スカイブルー','#a9c8e8'],['ミントグリーン','#bfe3d3'],['ライトグレー','#c9cbd1'],['オフホワイト','#f3f1ee'],['ネイビーグレー','#5c6a84'],['スモーキーブルー','#8aa0b8']]},
@@ -506,7 +507,7 @@ function suggest(){
  save();renderProps()}
 const miniAv=o=>{const {outer,...r}=o;return`<svg viewBox="28 10 144 500">${avatar(r,S.profile)}</svg>`};
 function renderProps(){const sc=SCENES[scene],pc=PC[S.profile.pc];
- $('#props').innerHTML=PROPS.length?PROPS.map((p,i)=>`<article class="prop"><div class="prop-h"><span class="en">Look ${i+1}</span><b>${sc.n} ・ ${SEASONS[curSeason()]}</b></div>
+ $('#props').innerHTML=PROPS.length?PROPS.map((p,i)=>`<article class="prop"><div class="prop-h"><span class="jt">コーデ ${i+1}</span><b>${sc.n} ・ ${SEASONS[curSeason()]}</b></div>
  <div class="ba"><figure>${miniAv(p.o)}<figcaption>手持ちだけで</figcaption></figure>${p.v?`<span class="plus">+1</span><figure>${miniAv(p.o2)}<figcaption>1着買い足すと</figcaption></figure>`:''}</div>
  <div class="its">${Object.values(p.o).map(getItem).filter(x=>x&&x.cat!=='cosme').map(x=>`<span>${esc(x.name)}</span>`).join('')}</div><p class="why">${p.why}</p>
  ${p.v?`<div class="buy"><div data-act="detail" data-id="${p.v.id}" style="cursor:pointer">${itemSVG(p.v)}</div><div style="flex:1;min-width:0"><b>＋ ${esc(p.v.name)}</b><small>${pc?pc.n+'の得意色':'着回しやすい色'}「${p.v.cn}」で、もっと${sc.mood}雰囲気に</small><div class="row">${shopBtns(p.v)}</div></div></div>`:''}
@@ -517,9 +518,9 @@ function renderStyle(){const pc=PC[S.profile.pc];$('#sceneChips').innerHTML=Obje
  $('#pcBanner').innerHTML=`<div class="pcb">${pc?`<span>あなたは<b>${pc.n}</b></span><div class="dots">${pc.c.slice(0,6).map(x=>`<i style="background:${x[1]}"></i>`).join('')}</div>`:'<span>パーソナルカラー未設定</span>'}<button class="btn sm ${pc?'ghost':'accent'}" data-act="diag">${pc?'変更':'30秒診断'}</button></div>`;
  PROPS.length?renderProps():suggest()}
 const QS=[['手首の血管の色は？',[['青・紫っぽい','b'],['緑っぽい','y']]],['しっくりくるアクセサリーは？',[['シルバー','b'],['ゴールド','y']]],['似合うとよく言われる色は？',[['明るくやわらかい色','l'],['深みのある濃い色','d']]]];
-function diag(st){if(st===0)QA=[];if(st<3){const [q,os]=QS[st];openSheet(`<p class="en" style="color:var(--accent)">Personal Color ${st+1} / 3</p><h3 class="sh-title">${q}</h3><div class="q">${os.map(([t,v])=>`<button class="btn ghost" data-act="diagA" data-v="${v}" data-s="${st}">${t}</button>`).join('')}</div>`);return}
+function diag(st){if(st===0)QA=[];if(st<3){const [q,os]=QS[st];openSheet(`<p class="jt" style="color:var(--accent)">パーソナルカラー診断 ${st+1} / 3</p><h3 class="sh-title">${q}</h3><div class="q">${os.map(([t,v])=>`<button class="btn ghost" data-act="diagA" data-v="${v}" data-s="${st}">${t}</button>`).join('')}</div>`);return}
  const b=QA.filter(x=>x==='b').length,base=b===2?'b':b===0?'y':QA[1],pc=base==='b'?(QA[2]==='l'?'summer':'winter'):(QA[2]==='l'?'spring':'autumn'),x=PC[pc];S.profile.pc=pc;PROPS=[];save();renderMe();
- openSheet(`<p class="en" style="color:var(--accent)">Your Color</p><h3 class="sh-title" style="font-size:28px">${x.n}</h3><p style="font-size:14px;line-height:1.7">${x.d}</p><div class="dots" style="margin:14px 0">${x.c.map(c=>`<i style="background:${c[1]};width:30px;height:30px"></i>`).join('')}</div><p class="muted">※かんたん診断です。正確に知りたい場合はプロの診断がおすすめ。</p><button class="btn accent wide" data-act="pcGo">このカラーでコーデを提案</button>`)}
+ openSheet(`<p class="jt" style="color:var(--accent)">あなたのカラーは</p><h3 class="sh-title" style="font-size:28px">${x.n}</h3><p style="font-size:14px;line-height:1.7">${x.d}</p><div class="dots" style="margin:14px 0">${x.c.map(c=>`<i style="background:${c[1]};width:30px;height:30px"></i>`).join('')}</div><p class="muted">※かんたん診断です。正確に知りたい場合はプロの診断がおすすめ。</p><button class="btn accent wide" data-act="pcGo">このカラーでコーデを提案</button>`)}
 const R_={closet:renderCloset,dress:renderDress,style:renderStyle,season:renderSeason,me:renderMe};
 function renderAll(){Object.values(R_).forEach(f=>f())}
 function go(v){cur=v;$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('#fab').style.display=v==='closet'?'':'none';$('#main').scrollTop=0;R_[v]();
@@ -580,7 +581,7 @@ const ACT={
  edit:el=>openForm(el.dataset.id),
  del:el=>{if(!confirm('このアイテムを削除しますか？'))return;const id=el.dataset.id;S.items=S.items.filter(i=>i.id!==id);S.cosme=S.cosme.filter(i=>i.id!==id);for(const k in S.outfit)if(S.outfit[k]===id)delete S.outfit[k];save();closeSheet();renderAll();toast('削除しました')},
  skins:()=>{$('#skinBtn').classList.remove('pulse');openSheet(`<h3 class="sh-title">クローゼットの見た目</h3><p class="muted" style="margin-bottom:10px">気分に合わせて、自分好みのクローゼットに。</p>${skinsHTML()}`)},
- skin:el=>{S.skin=el.dataset.k;save();$('#app').dataset.skin=S.skin;$$('.skin').forEach(b=>b.classList.toggle('on',b.dataset.k===S.skin));if(SKINS[S.skin].p)toast('PREMIUMスキンを試着中（今だけ無料）');if(cur==='closet'){closeSheet();openDoors()}},
+ skin:el=>{S.skin=el.dataset.k;save();$('#app').dataset.skin=S.skin;$$('.skin').forEach(b=>b.classList.toggle('on',b.dataset.k===S.skin));if(SKINS[S.skin].p)toast('プレミアムスキンを試着中（今だけ無料）');if(cur==='closet'){closeSheet();openDoors()}},
  cat:el=>{fCat=el.dataset.k;renderCloset();drop('#rail .hang')},
  sea:el=>{fSea=el.dataset.k;renderCloset();drop('#rail .hang')},
  slot:el=>{dSlot=el.dataset.k;renderDress()},
@@ -625,7 +626,7 @@ document.addEventListener('change',async e=>{const t=e.target;
 /* ---------- boot ---------- */
 (async()=>{let d=null;try{d=await DB.get('state')}catch(_){}S=d&&d.items?d:seed();S.profile={...DEFP,...S.profile};S.outfit=S.outfit||{};S.virtual=S.virtual||{};
  $('#app').dataset.skin=S.skin;renderAll();go('closet');['#rail','#sRail','#shelf','#vanity','#picker'].forEach(s=>dragScroll($(s)));requestAnimationFrame(swing);openDoors();if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
- if(!S.onboarded)setTimeout(()=>openSheet(`<div class="onb"><p class="en">Welcome to Closette</p><h3>開けるたび、<br>主役のクローゼット。</h3><ol><li>ハンガーをスワイプして服をながめる</li><li>右上のパレットで<b>クローゼットの見た目</b>を変える</li><li>今日の1着を撮って、ハンガーに掛ける</li></ol><p class="muted">いまはサンプルの服が入っています。</p><button class="btn accent wide" data-act="onbShot">📷 今日の1着を撮ってみる</button><button class="btn ghost wide" data-act="onbLater">先にながめる</button></div>`),2100)})();
+ if(!S.onboarded)setTimeout(()=>openSheet(`<div class="onb"><p class="jt" style="color:var(--accent)">Closetteへようこそ</p><h3>開けるたび、<br>主役のクローゼット。</h3><ol><li>ハンガーをスワイプして服をながめる</li><li>右上のパレットで<b>クローゼットの見た目</b>を変える</li><li>今日の1着を撮って、ハンガーに掛ける</li></ol><p class="muted">いまはサンプルの服が入っています。</p><button class="btn accent wide" data-act="onbShot">📷 今日の1着を撮ってみる</button><button class="btn ghost wide" data-act="onbLater">先にながめる</button></div>`),2100)})();
 </script>
 </body>
 </html>
