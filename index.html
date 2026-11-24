@@ -312,8 +312,13 @@ nav.tabs button.on::before{content:'';position:absolute;top:0;left:50%;width:22p
 <radialGradient id="faceG" cx=".5" cy=".42" r=".62"><stop id="fk0" offset="0"/><stop id="fk1" offset="1"/></radialGradient>
 <linearGradient id="hairG" x1="0" y1="0" x2="0" y2="1"><stop id="hr0" offset="0"/><stop id="hr1" offset=".35"/><stop id="hr2" offset="1"/></linearGradient>
 <radialGradient id="iris" cx=".5" cy=".62" r=".6"><stop offset="0" stop-color="#8a5a3c"/><stop offset=".7" stop-color="#4a2c1c"/><stop offset="1" stop-color="#22140c"/></radialGradient>
-<clipPath id="eyeClip"><path d="M85,59 Q91,54.5 97,59 Q91,62.6 85,59 Z M103,59 Q109,54.5 115,59 Q109,62.6 103,59 Z"/></clipPath>
+<clipPath id="eyeClip"><path d="M85.4,59 Q91,55.3 96.6,59 Q91,61.9 85.4,59 Z M103.4,59 Q109,55.3 114.6,59 Q109,61.9 103.4,59 Z"/></clipPath>
 <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.8"/></filter>
+<linearGradient id="lit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient>
+<linearGradient id="gld" x1="0" x2="1"><stop offset="0" stop-color="#8a6a2c"/><stop offset=".35" stop-color="#f3dfa2"/><stop offset=".6" stop-color="#c9a14e"/><stop offset="1" stop-color="#7a5a22"/></linearGradient>
+<linearGradient id="lac" x1="0" x2="1"><stop offset="0" stop-color="#121113"/><stop offset=".3" stop-color="#4a484e"/><stop offset=".55" stop-color="#1b1a1d"/><stop offset="1" stop-color="#0d0c0e"/></linearGradient>
+<pattern id="rib" width="3" height="8" patternUnits="userSpaceOnUse"><rect width="1.1" height="8" fill="#000" opacity=".08"/></pattern>
+<pattern id="twill" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="1" height="3" fill="#fff" opacity=".09"/></pattern>
 <pattern id="tex" width="40" height="40" patternUnits="userSpaceOnUse"><image id="texImg" width="40" height="40"/></pattern>
 </defs></svg>
 
@@ -511,7 +516,7 @@ function photoAvatar(o,p,meas){const A=p.photoAv,P=bodyP(p),tU=segM(A.lm,P,1),tL
 
 /* ---------- SVG drawing ---------- */
 const L=x=>(100-x).toFixed(1),R=x=>(100+x).toFixed(1);
-const F=(d,c)=>`<path d="${d}" fill="${c}" stroke="rgba(0,0,0,.14)" stroke-width=".8"/><path d="${d}" fill="url(#shd)"/><path d="${d}" fill="url(#tex)"/>`;
+const F=(d,c,tx)=>`<path d="${d}" fill="${c}" stroke="${shade(c,-.35)}" stroke-opacity=".5" stroke-width=".7" stroke-linejoin="round"/><path d="${d}" fill="url(#shd)"/><path d="${d}" fill="url(#lit)"/>${tx?`<path d="${d}" fill="url(#${tx})"/>`:''}<path d="${d}" fill="url(#tex)"/>`;
 // symmetric path: left-side points as [dx,y] offsets from center; right side is mirrored automatically
 function symPath(st,segs){const P=p=>`${L(p[0])},${p[1]}`,Q=p=>`${R(p[0])},${p[1]}`,pts=[st,...segs.map(s=>s[s.length-1])];let d=`M${P(st)}`;
  segs.forEach(s=>d+=s.length===3?` C${s.map(P).join(' ')}`:` L${P(s[0])}`);d+=` L${Q(pts[pts.length-1])}`;
@@ -520,52 +525,86 @@ function photoOn(x,P){const {S:s,H}=P,t=x.type;let b,al='xMidYMin';
  switch(x.cat){case'tops':b=[100-(s+17),98,2*(s+17),165];break;case'outer':b=[100-(s+19),96,2*(s+19),t==='coat'?330:178];break;case'dress':b=[100-(H+20),98,2*(H+20),280];break;
   case'bottoms':b=['pants','wide'].includes(t)?[100-(H+10),186,2*(H+10),300]:[100-(H+22),186,2*(H+22),176];break;case'shoes':b=[74,470,52,34];al='xMidYMax';break;case'bag':b=[100+s-8,248,48,60];break;default:b=[86,100,28,38]}
  return`<image href="${x.photo}" x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${b[3]}" preserveAspectRatio="${al} meet"/>`}
-const SL=(d,c,w)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="url(#shd)" stroke-width="${w}" stroke-linecap="round"/>`;
-const ln=(d,o=.16,w=1)=>`<path d="${d}" fill="none" stroke="rgba(0,0,0,${o})" stroke-width="${w}" stroke-linecap="round"/>`;
-const sleeves=(P,c,w,end=248)=>[L,R].map(f=>SL(`M${f(P.S-2)},116 Q${f(P.S+8)},188 ${f(P.S+7)},${end}`,c,w)).join('');
+const ln=(d,o=.16,w=1)=>`<path d="${d}" fill="none" stroke="rgba(30,15,5,${o})" stroke-width="${w}" stroke-linecap="round"/>`;
+// soft fold shadow (two layered strokes, no filter so it stays light on phones) and soft highlight
+const fd=(d,o=.16,w=2.4)=>`<path d="${d}" fill="none" stroke="#1e0c00" stroke-opacity="${(o*.4).toFixed(3)}" stroke-width="${(w*2.2).toFixed(1)}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#1e0c00" stroke-opacity="${(o*.75).toFixed(3)}" stroke-width="${(w*.8).toFixed(1)}" stroke-linecap="round"/>`;
+const hl=(d,o=.2,w=4)=>`<path d="${d}" fill="none" stroke="#fff" stroke-opacity="${o}" stroke-width="${w}" stroke-linecap="round"/>`;
+const LR=fn=>fn(L)+fn(R);
 function bodyP(p){const c=(v,a,b)=>Math.min(b,Math.max(a,v));return{S:34*c(p.bust/84,.88,1.22),B:31*c(p.bust/84,.88,1.25),W:24*c(p.waist/62,.85,1.35),H:34*c(p.hip/88,.88,1.25)}}
 const P0=bodyP(DEFP);
 function garment(t,c,P,body){
- const {S:s,B,W,H}=P,hem=Math.max(W+7,H-3),dk=shade(c,-.22);
+ const {S:s,B,W,H}=P,hem=Math.max(W+8,H+2),dk=shade(c,-.22),lt=shade(c,.14),eg=shade(c,-.4),
+  NK=(w,y)=>`M${L(w)},101 C${L(w-1.5)},${y-6} ${L(5)},${y} 100,${y} C${R(5)},${y} ${R(w-1.5)},${y-6} ${R(w)},101`,
+  band=(y0,y1,w0,w1,col,tx)=>F(symPath([0,y0],[[[w0,y0]],[[w1,y1]],[[0,y1]]]),col,tx),
+  loop=x=>LR(f=>ln(`M${f(x)},190 V199.5`,.22,2.4)),
+  fly=()=>ln(`M${R(1.5)},200 V246 Q${R(1.5)},253 100,257`,.22,.9),
+  slv=(o,len,tx,cuff)=>LR(f=>F(`M${f(s-3)},111 C${f(s+7)},110 ${f(s+o-1)},124 ${f(s+o)},146 C${f(s+o+1)},182 ${f(s+o)},218 ${f(s+o-1)},${len} L${f(s-1.5)},${len} C${f(s-1)},218 ${f(s-2)},182 ${f(s-4)},150 Z`,c,tx)
+   +(cuff?F(`M${f(s+o-.6)},${len-9} L${f(s-1.3)},${len-9} L${f(s-1.5)},${len} L${f(s+o-1)},${len} Z`,shade(c,cuff),tx):'')
+   +fd(`M${f(s+o-2)},186 Q${f(s+4)},193 ${f(s)},203`,.18,1.6)+fd(`M${f(s+o-1)},152 Q${f(s+5)},160 ${f(s-1)},167`,.12,1.4)+hl(`M${f(s+o-4)},128 Q${f(s+o-3)},180 ${f(s+o-4)},${len-14}`,.14,2.5));
  switch(t){
- case'tee':return F(`M${L(11)},101 Q100,113 ${R(11)},101 L${R(s+1)},109 L${R(s+15)},145 L${R(B+4)},155 L${R(hem)},230 L${L(hem)},230 L${L(B+4)},155 L${L(s+15)},145 L${L(s+1)},109 Z`,c)+ln(`M${L(11)},101 Q100,113 ${R(11)},101`,.22,1.6);
- case'blouse':return F(`M${L(11)},101 Q100,116 ${R(11)},101 L${R(s+1)},109 Q${R(s+21)},116 ${R(s+13)},150 Q${R(s+5)},157 ${R(B+3)},153 Q${R(B+5)},190 ${R(hem+1)},232 Q100,240 ${L(hem+1)},232 Q${L(B+5)},190 ${L(B+3)},153 Q${L(s+5)},157 ${L(s+13)},150 Q${L(s+21)},116 ${L(s+1)},109 Z`,c)
-  +ln(`M${L(s+10)},121 Q${L(s+14)},135 ${L(s+9)},148 M${R(s+10)},121 Q${R(s+14)},135 ${R(s+9)},148`)+`<path d="M100,110 l-9,-5 l1,10 Z M100,110 l9,-5 l-1,10 Z" fill="${dk}"/><circle cx="100" cy="110" r="2.4" fill="${dk}"/>`+ln('M97,112 L93,128 M103,112 L107,128',.28,1.3);
- case'knit':return sleeves(P,c,17)+F(`M${L(12)},100 Q100,111 ${R(12)},100 L${R(s+2)},110 Q${R(B+5)},140 ${R(B+4)},165 L${R(hem+1)},233 L${L(hem+1)},233 L${L(B+4)},165 Q${L(B+5)},140 ${L(s+2)},110 Z`,c)
-  +ln(`M${L(12)},101 Q100,112 ${R(12)},101`,.2,3)+`<path d="M${L(hem)},228 H${R(hem)}" stroke="rgba(0,0,0,.16)" stroke-width="7" stroke-dasharray="1 2.5"/>`;
- case'shirt':return sleeves(P,c,16)+F(`M${L(12)},100 L${R(12)},100 L${R(s+2)},110 Q${R(B+5)},140 ${R(B+4)},165 L${R(hem+2)},230 Q100,242 ${L(hem+2)},230 L${L(B+4)},165 Q${L(B+5)},140 ${L(s+2)},110 Z`,c)
-  +`<path d="M${L(12)},99 L${L(3)},117 L100,104 L${R(3)},117 L${R(12)},99 L100,97 Z" fill="${shade(c,.12)}" stroke="rgba(0,0,0,.18)" stroke-width=".8"/>`+ln('M100,106 V236',.2)+[124,148,172,196,220].map(y=>`<circle cx="102.5" cy="${y}" r="1.5" fill="${dk}"/>`).join('');
- case'skirt':return F(`M${L(W+1)},190 L${R(W+1)},190 Q${R(H+3)},226 ${R(H+2)},250 L${R(H)},335 L${L(H)},335 L${L(H+2)},250 Q${L(H+3)},226 ${L(W+1)},190 Z`,c)+ln(`M${L(W+1)},198 H${R(W+1)}`,.18)+ln(`M${R(8)},335 V312`,.22);
- case'flare':return F(`M${L(W+1)},190 L${R(W+1)},190 Q${R(H+2)},222 ${R(H+6)},245 L${R(H+24)},352 Q100,362 ${L(H+24)},352 L${L(H+6)},245 Q${L(H+2)},222 ${L(W+1)},190 Z`,c)+ln(`M${L(W+1)},198 H${R(W+1)}`,.18)+ln(`M${L(10)},205 L${L(22)},355 M${R(10)},205 L${R(22)},355 M100,206 V360`,.12);
- case'pants':return F(`M${L(W+1)},190 L${R(W+1)},190 Q${R(H+2)},228 ${R(H+2)},250 L${R(H*.5+9)},380 L${R(H*.35+7)},472 L${R(4)},472 L${R(3)},380 L100,282 L${L(3)},380 L${L(4)},472 L${L(H*.35+7)},472 L${L(H*.5+9)},380 L${L(H+2)},250 Q${L(H+2)},228 ${L(W+1)},190 Z`,c)
-  +ln(`M${L(W+1)},198 H${R(W+1)} M100,198 V282 M${L(W-3)},200 Q${L(W-6)},218 ${L(W+2)},226 M${R(W-3)},200 Q${R(W-6)},218 ${R(W+2)},226`,.2);
- case'wide':return F(`M${L(W+1)},190 L${R(W+1)},190 Q${R(H+2)},228 ${R(H+3)},250 L${R(H+10)},472 L${R(2)},472 L100,290 L${L(2)},472 L${L(H+10)},472 L${L(H+3)},250 Q${L(H+2)},228 ${L(W+1)},190 Z`,c)+ln(`M${L(W+1)},198 H${R(W+1)} M${L(H/2+3)},250 L${L(H/2+6)},470 M${R(H/2+3)},250 L${R(H/2+6)},470`,.13);
- case'dress':return F(`M${L(12)},101 Q100,118 ${R(12)},101 L${R(s+1)},110 Q${R(s+12)},122 ${R(s+10)},140 L${R(B+3)},150 Q${R(B+2)},172 ${R(W+2)},192 Q${R(H+4)},230 ${R(H+8)},250 L${R(H+18)},362 Q100,370 ${L(H+18)},362 L${L(H+8)},250 Q${L(H+4)},230 ${L(W+2)},192 Q${L(B+2)},172 ${L(B+3)},150 L${L(s+10)},140 Q${L(s+12)},122 ${L(s+1)},110 Z`,c)
-  +`<path d="M${L(W+2)},190 Q100,195 ${R(W+2)},190 L${R(W+2)},197 Q100,202 ${L(W+2)},197 Z" fill="${dk}" opacity=".55"/>`+ln(`M${L(12)},205 L${L(24)},362 M${R(12)},205 L${R(24)},362`,.12);
- case'coat':case'jacket':{const y=t==='coat'?408:254,hw=t==='coat'?H+11:Math.max(H+4,B+6),mid=Math.max(W+10,B+6);let g='';
-  if(!body)g+=`<path d="M${L(s+3)},110 L${R(s+3)},110 L${R(hw)},${y} L${L(hw)},${y} Z" fill="${shade(c,-.35)}"/>`;
-  g+=sleeves(P,c,21,250);
-  const pn=f=>`M${f(12)},100 L${f(s+4)},110 Q${f(B+8)},150 ${f(mid)},200 L${f(hw)},${y} L${f(5)},${y} L${f(5)},205 L${f(13)},140 Z`;
-  g+=F(pn(L),c)+F(pn(R),c)+[L,R].map(f=>`<path d="M${f(12)},100 L${f(23)},128 L${f(15)},140 L${f(5)},200" fill="${shade(c,.06)}" stroke="rgba(0,0,0,.2)" stroke-width="1"/>`).join('');
-  g+=t==='coat'?[230,262].map(y=>`<circle cx="${L(9)}" cy="${y}" r="2.3" fill="${dk}"/><circle cx="${R(9)}" cy="${y}" r="2.3" fill="${dk}"/>`).join('')+ln(`M${L(hw-4)},300 L${L(16)},300 M${R(hw-4)},300 L${R(16)},300`,.2,1.2):`<circle cx="${L(8)}" cy="215" r="2.2" fill="${dk}"/>`;
-  return g}
- case'shoulder':return`<path d="M${L(s-10)},108 L${R(H+3)},240" stroke="${dk}" stroke-width="2.2" fill="none"/>`+F(`M${R(H-12)},236 h28 a5,5 0 0 1 5,5 v18 a5,5 0 0 1 -5,5 h-28 a5,5 0 0 1 -5,-5 v-18 a5,5 0 0 1 5,-5 Z`,c)+`<rect x="${R(H)}" y="246" width="4" height="5" rx="1" fill="#d8b56a"/>`;
- case'tote':return`<path d="M${R(s-4)},284 Q${R(s+5)},250 ${R(s+14)},284" stroke="${dk}" stroke-width="2.4" fill="none"/>`+F(`M${R(s-13)},282 L${R(s+23)},282 L${R(s+20)},330 L${R(s-10)},330 Z`,c);
- case'pumps':case'sneaker':return[L,R].map(f=>t==='pumps'?F(`M${f(17)},481 L${f(4)},481 L${f(3)},496 Q${f(10)},503 ${f(18)},497 Z`,c):F(`M${f(19)},478 L${f(3)},478 L${f(2)},494 L${f(20)},494 Z`,c)+`<path d="M${f(21)},493 L${f(1)},493 L${f(1)},500 L${f(21)},500 Z" fill="#fafafa" stroke="rgba(0,0,0,.15)" stroke-width=".6"/>`).join('');
- case'necklace':return`<path d="M${L(10)},103 Q100,140 ${R(10)},103" fill="none" stroke="${c}" stroke-width="1.3"/><circle cx="100" cy="123" r="3.2" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>`;
- case'earring':return`<circle cx="75.5" cy="70" r="2.8" fill="none" stroke="${c}" stroke-width="1.4"/><circle cx="124.5" cy="70" r="2.8" fill="none" stroke="${c}" stroke-width="1.4"/>`;
+ case'tee':return F(symPath([0,111],[[[5,111],[9.5,105],[11,101]],[[s-8,103],[s-2,105.5],[s+1,109]],[[s+7,117],[s+12,130],[s+15,143]],[[s+11,146.5],[s+6,148],[s+2,148.5]],[[B+3,150],[B+4,152],[B+4,156]],[[B+5,182],[hem,206],[hem,228]],[[hem*.6,231.5],[10,232],[0,232]]]),c)
+  +ln(NK(11,111),.22,2.2)+LR(f=>ln(`M${f(s+14.5)},141 L${f(s+2.5)},146.5`,.14,.8)+fd(`M${f(B-3)},162 Q${f(B-6)},196 ${f(hem-7)},226`,.13)+fd(`M${f(B+2)},155 Q${f(B-7)},163 ${f(B-13)},170`,.12,1.8))
+  +hl(`M${L(B-10)},128 Q${L(B-12)},180 ${L(B-9)},222`,.16,6);
+ case'blouse':return F(symPath([0,113],[[[5,113],[10,106],[11,101]],[[s-8,103],[s-2,105.5],[s,109]],[[s+12,107],[s+23,124],[s+16,146]],[[s+12,152],[s+6,153],[s+3,151]],[[B+3,152],[B+3,155],[B+3,158]],[[B+6,188],[hem+2,212],[hem+2,232]],[[hem*.6,237.5],[10,238],[0,238]]]),c)
+  +LR(f=>fd(`M${f(s+5)},113 Q${f(s+13)},128 ${f(s+11)},147`,.14,2)+fd(`M${f(s+11)},115 Q${f(s+19)},128 ${f(s+15)},146`,.1,1.6)+ln(`M${f(s+3.5)},149.5 Q${f(s+10)},154 ${f(s+15)},147`,.22,1.4)+fd(`M${f(B-2)},168 Q${f(B-4)},200 ${f(hem-6)},234`,.12))
+  +hl(`M${L(B-10)},130 Q${L(B-12)},182 ${L(B-9)},228`,.18,6)
+  +`<path d="M100,108 C94,100 85,103 88.5,110 C90.5,114 96,112.5 100,108 Z M100,108 C106,100 115,103 111.5,110 C109.5,114 104,112.5 100,108 Z" fill="${shade(c,-.1)}" stroke="${eg}" stroke-opacity=".5" stroke-width=".5"/><path d="M99,109.5 Q96,117 94,126 M101,109.5 Q104,117 106,126" stroke="${shade(c,-.1)}" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="100" cy="108.5" r="2.5" fill="${shade(c,-.3)}"/>`;
+ case'knit':return F(symPath([0,108],[[[6,108],[10.5,103],[12,100]],[[s-8,102],[s-3,105],[s-1,110]],[[B+5,128],[B+6,148],[B+5,166]],[[B+4,196],[hem+1,214],[hem+1,234]],[[hem*.6,236],[10,236],[0,236]]]),c,'rib')
+  +band(226,236,hem+1,hem+1,shade(c,-.05),'rib')+ln(NK(12,108),.25,3.2)
+  +LR(f=>fd(`M${f(B-2)},172 Q${f(B-5)},200 ${f(hem-6)},224`,.14))+hl(`M${L(B-9)},124 Q${L(B-11)},176 ${L(B-8)},220`,.14,7)
+  +slv(11,252,'rib',-.06);
+ case'shirt':return F(symPath([0,104],[[[4,103],[9,101],[12,99]],[[s-8,101],[s-3,105],[s-1,110]],[[B+5,128],[B+6,148],[B+5,166]],[[B+4,196],[hem+2,212],[hem+2,226]],[[hem+1,238],[14,246],[0,246]]]),c)
+  +ln(`M${R(1.5)},107 V245 M${R(5.5)},107 V245`,.14,.8)+[124,148,172,196,220].map(y=>`<circle cx="${R(3.5)}" cy="${y}" r="1.5" fill="${shade(c,-.18)}" stroke="rgba(0,0,0,.2)" stroke-width=".4"/>`).join('')
+  +ln(`M${L(B-3)},134 V149 Q${L(B-9)},152 ${L(B-15)},149 V134 Z`,.14,.8)
+  +LR(f=>fd(`M${f(B-2)},170 Q${f(B-5)},204 ${f(hem-6)},234`,.13)+`<path d="M${f(12.5)},98 C${f(10.5)},104 ${f(7.5)},112 ${f(4)},119.5 L100,107 C${f(4)},103.5 ${f(8)},100.5 ${f(12.5)},98 Z" fill="${lt}" stroke="${eg}" stroke-opacity=".55" stroke-width=".7"/>`)
+  +ln(`M${L(12.5)},98 Q100,93.5 ${R(12.5)},98`,.2,1.2)+hl(`M${L(B-10)},128 Q${L(B-12)},182 ${L(B-9)},230`,.16,6)
+  +slv(12,252,'',.06);
+ case'skirt':return F(symPath([0,190],[[[W+1,190]],[[W+3,206],[H+3,228],[H+3,252]],[[H+2,290],[H,320],[H-1,336]],[[H*.5,338],[8,338],[0,338]]]),c)
+  +band(190,198,W+1,W+1.4,shade(c,-.08))+ln('M100,338 V314',.25,1)
+  +LR(f=>fd(`M${f(H-6)},252 Q${f(H-9)},292 ${f(H-10)},332`,.12)+ln(`M${f(W-6)},198 L${f(W-7)},214`,.14,.8))+hl(`M${L(H-14)},210 Q${L(H-16)},270 ${L(H-15)},330`,.14,6);
+ case'flare':return F(symPath([0,190],[[[W+1,190]],[[W+4,204],[H+4,226],[H+8,250]],[[H+15,290],[H+21,330],[H+25,354]],[[H+14,361],[H*.4,362],[0,362]]]),c)
+  +band(190,198,W+1,W+1.6,shade(c,-.08))
+  +[-3,-2,-1,0,1,2,3].map(i=>fd(`M${100+i*6.5},${202+Math.abs(i)} Q${100+i*10},280 ${100+i*14.5},${358-Math.abs(i)}`,i%2?.15:.07,i%2?2.4:1.4)+(i%2?'':hl(`M${102.5+i*6.5},206 Q${103+i*10},280 ${103+i*14.5},354`,.12,2.5))).join('');
+ case'pants':return F(symPath([0,280],[[[1,300],[1.5,330],[2,380]],[[2.5,410],[3,440],[3.5,472]],[[H*.35+7,472]],[[H*.35+7,452],[H*.4+8,420],[H*.5+9,382]],[[H*.5+10,356],[H+1,300],[H+2,252]],[[H+3,234],[H+2,212],[W+1,190]],[[0,190]]]),c,'twill')
+  +band(190,199,W+1,W+1.4,shade(c,-.06),'twill')+fly()+loop(W-8)
+  +LR(f=>ln(`M${f(W-4)},199 Q${f(W-2)},214 ${f(W+3.5)},224`,.2,.9)+ln(`M${f(H*.5+1)},262 L${f(H*.2+5)},468`,.08,1)+fd(`M${f(H*.5+6)},372 Q${f(H*.3+5)},380 ${f(5)},378`,.14,1.8)+fd(`M${f(2)},290 Q${f(8)},300 ${f(14)},304`,.14,1.6))
+  +hl(`M${L(H*.5+5)},262 Q${L(H*.45+4)},360 ${L(H*.35+6)},466`,.12,4);
+ case'wide':return F(symPath([0,284],[[[1.5,320],[2,400],[2,472]],[[H+11,472]],[[H+9,400],[H+5,320],[H+3,252]],[[H+3,234],[H+2,212],[W+1,190]],[[0,190]]]),c)
+  +band(190,199,W+1,W+1.4,shade(c,-.06))+fly()+loop(W-8)
+  +LR(f=>fd(`M${f(W-6)},200 Q${f(H*.5+4)},330 ${f(H*.5+6)},468`,.14,2.4)+hl(`M${f(W-3)},204 Q${f(H*.5+8)},330 ${f(H*.5+10)},466`,.12,3)+fd(`M${f(H+4)},300 Q${f(H+8)},400 ${f(H+9)},468`,.1,2));
+ case'dress':return F(symPath([0,112],[[[5,112],[10,105],[11.5,101]],[[s-8,103],[s-2,106],[s,110]],[[s+8,114],[s+11,124],[s+10,138]],[[s+6,141],[B+5,142],[B+3,148]],[[B+3,166],[W+3,180],[W+2,192]],[[W+5,206],[H+6,230],[H+9,252]],[[H+14,300],[H+18,340],[H+20,364]],[[H+8,369.5],[H*.4,370],[0,370]]]),c)
+  +band(190,197,W+2,W+2.3,dk)+ln(NK(11.5,112),.2,1.6)
+  +LR(f=>ln(`M${f(B-8)},150 Q${f(B-9)},172 ${f(W-4)},190`,.12,1)+fd(`M${f(10)},200 Q${f(16)},290 ${f(22)},366`,.13,2.4)+fd(`M${f(H-2)},214 Q${f(H+6)},300 ${f(H+12)},364`,.11,2)+hl(`M${f(H-12)},210 Q${f(H-8)},290 ${f(H-4)},360`,.1,3))
+  +hl(`M${L(B-10)},124 Q${L(B-12)},160 ${L(W-6)},186`,.14,5);
+ case'coat':case'jacket':{const co=t==='coat',y=co?408:256,hw=co?H+11:Math.max(H+4,B+6),mid=Math.max(W+10,B+6);let g='';
+  if(!body)g+=F(symPath([0,102],[[[12,100]],[[s+3,110]],[[hw-2,y]],[[0,y]]]),shade(c,-.4));
+  const pn=f=>`M${f(12)},100 L${f(s+3)},110 C${f(B+8)},132 ${f(mid+1)},170 ${f(mid)},205 C${f(hw-3)},250 ${f(hw)},${y-60} ${f(hw)},${y} L${f(-5)},${y} L${f(-5)},205 L${f(6)},150 C${f(9)},130 ${f(11)},112 ${f(12)},100 Z`,
+   lp=f=>`<path d="M${f(12)},100 L${f(22)},124 L${f(16.5)},131 L${f(-2)},203 L${f(6)},150 C${f(9)},130 ${f(11)},112 ${f(12)},100 Z" fill="${lt}" stroke="${eg}" stroke-opacity=".5" stroke-width=".7"/>`+fd(`M${f(16)},133 L${f(1)},196`,.14,1.6);
+  g+=F(pn(L),c)+lp(L)+F(pn(R),c)+lp(R);
+  g+=LR(f=>fd(`M${f(mid-5)},214 Q${f(hw-8)},${(y+214)/2} ${f(hw-6)},${y-6}`,.12,2.4)+hl(`M${f(mid-12)},150 Q${f(mid-14)},${(y+150)/2} ${f(hw-14)},${y-10}`,.1,4));
+  if(co)g+=F(symPath([0,198],[[[mid+.6,195]],[[mid+.6,205]],[[0,207]]]),shade(c,-.08))+`<rect x="${L(14)}" y="197" width="9" height="10" rx="1.5" fill="none" stroke="${shade(c,-.45)}" stroke-width="1.4"/>`
+   +[236,268,300].map(v=>`<circle cx="${L(9)}" cy="${v}" r="2.4" fill="${shade(c,-.35)}"/><circle cx="${R(9)}" cy="${v}" r="2.4" fill="${shade(c,-.35)}"/>`).join('')
+   +LR(f=>ln(`M${f(hw-5)},312 L${f(17)},312`,.22,1.2)+ln(`M${f(hw-5)},312 L${f(hw-5)},322 L${f(17)},322 L${f(17)},312`,.12,.8));
+  else g+=`<circle cx="${R(-2)}" cy="214" r="2.3" fill="${shade(c,-.35)}"/>`+LR(f=>ln(`M${f(hw-4)},232 L${f(14)},232`,.22,1.1));
+  return g+slv(co?14:13,co?256:252,'',co?-.05:0)}
+ case'shoulder':{const x=+R(H-14);return`<path d="M${L(s-10)},108 C${L(2)},160 ${x-2},206 ${x+6},238" stroke="${dk}" stroke-width="1.8" fill="none"/>`+F(`M${x},238 h30 q5,0 5,5 v17 q0,5 -5,5 h-30 q-5,0 -5,-5 v-17 q0,-5 5,-5 Z`,c)+`<path d="M${x-5},246 q0,-8 5,-8 h30 q5,0 5,8 v3 q-20,8 -40,0 Z" fill="${dk}" opacity=".55"/><rect x="${x+12.5}" y="248" width="5" height="6" rx="1.2" fill="url(#gld)"/>`}
+ case'tote':return`<path d="M${R(s-3)},284 C${R(s-2)},252 ${R(s+12)},252 ${R(s+13)},284 M${R(s+1)},284 C${R(s+2)},258 ${R(s+9)},258 ${R(s+10)},284" stroke="${dk}" stroke-width="2.2" fill="none"/>`+F(`M${R(s-13)},282 L${R(s+23)},282 L${R(s+20)},330 Q${R(s+5)},332 ${R(s-10)},330 Z`,c)+ln(`M${R(s-11)},288 L${R(s+21)},288`,.15,.8);
+ case'pumps':return LR(f=>F(`M${f(16)},491 C${f(17)},497 ${f(14.5)},505 ${f(10.5)},506.5 C${f(7)},505.5 ${f(5)},498 ${f(6)},491 Q${f(11)},496 ${f(16)},491 Z`,c)+hl(`M${f(13)},497 Q${f(12)},502 ${f(10.5)},504`,.35,1.2));
+ case'sneaker':return LR(f=>F(`M${f(17)},486 C${f(18.5)},494 ${f(16.5)},502 ${f(11)},503 C${f(6)},503 ${f(4)},496 ${f(5)},486 Q${f(11)},483 ${f(17)},486 Z`,c)+`<path d="M${f(18.2)},498 C${f(17.5)},504 ${f(15)},507 ${f(11)},507 C${f(7)},507 ${f(4.5)},504 ${f(3.8)},498 Q${f(11)},501 ${f(18.2)},498 Z" fill="#f6f4f0" stroke="rgba(0,0,0,.18)" stroke-width=".5"/>`+ln(`M${f(8)},489 L${f(14)},489 M${f(8)},492.5 L${f(14)},492.5`,.3,.8));
+ case'necklace':return`<path d="M${L(10)},103 Q100,138 ${R(10)},103" fill="none" stroke="${c}" stroke-width="1" stroke-dasharray="1.6 .8"/><path d="M100,121 c-2.6,2.4 -3.4,5 -2.2,7 c.8,1.4 3.6,1.4 4.4,0 c1.2,-2 .4,-4.6 -2.2,-7 Z" fill="${c}" stroke="${eg}" stroke-width=".5"/><circle cx="99" cy="125.5" r=".9" fill="#fff" opacity=".7"/>`;
+ case'earring':return[78.4,121.6].map(x=>`<circle cx="${x}" cy="73.6" r="2.5" fill="none" stroke="${c}" stroke-width="1.3"/><path d="M${x-1.6},71.8 a2.5,2.5 0 0 1 2.6,-.6" stroke="#fff" stroke-opacity=".6" stroke-width=".6" fill="none"/>`).join('');
  }return''}
-function shelfSVG(it){const c=it.color,dk=shade(c,-.25),lt=shade(c,.35);
+function shelfSVG(it){const c=it.color,dk=shade(c,-.25),lt=shade(c,.3),sh='<ellipse cx="40" cy="76" rx="30" ry="2.6" fill="rgba(0,0,0,.2)" filter="url(#soft)"/>';
  switch(it.type||it.kind){
- case'shoulder':return`<path d="M20,42 Q40,4 60,42" fill="none" stroke="${dk}" stroke-width="2.5"/>`+F('M14,40 h52 a6,6 0 0 1 6,6 v22 a6,6 0 0 1 -6,6 h-52 a6,6 0 0 1 -6,-6 v-22 a6,6 0 0 1 6,-6 Z',c)+`<path d="M8,48 Q40,62 72,48 V46 a6,6 0 0 0 -6,-6 h-52 a6,6 0 0 0 -6,6 Z" fill="${dk}" opacity=".35"/><rect x="37" y="52" width="6" height="7" rx="1.5" fill="#d8b56a"/>`;
- case'tote':return`<path d="M28,36 Q28,12 36,12 Q44,12 44,36 M36,36 Q36,12 44,12 Q52,12 52,36" fill="none" stroke="${dk}" stroke-width="2.5"/>`+F('M12,34 L68,34 L63,76 L17,76 Z',c);
- case'pumps':return F('M6,66 Q8,56 22,57 Q36,59 46,66 Q56,52 64,40 L70,40 L68,50 L66,74 L61,74 L60,64 Q42,74 12,73 Q6,72 6,66 Z',c)+'<path d="M14,61 Q30,60 44,66" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="1.5"/>';
- case'sneaker':return F('M6,62 Q8,44 26,44 L38,44 Q46,52 60,53 Q74,55 74,64 V66 H6 Z',c)+`<path d="M5,64 H75 V71 Q75,74 72,74 H8 Q5,74 5,71 Z" fill="#fafafa" stroke="rgba(0,0,0,.15)" stroke-width=".8"/><path d="M30,47 L36,52 M34,45 L40,50 M38,44 L44,49" stroke="${dk}" stroke-width="1.4"/>`;
- case'necklace':return`<path d="M14,10 Q40,74 66,10" fill="none" stroke="${c}" stroke-width="1.6"/><circle cx="40" cy="45" r="5" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>`;
- case'earring':return`<circle cx="28" cy="40" r="11" fill="none" stroke="${c}" stroke-width="3"/><circle cx="54" cy="40" r="11" fill="none" stroke="${c}" stroke-width="3"/>`;
- case'lip':return`<rect x="30" y="44" width="20" height="32" rx="2" fill="#2b2b2e"/><rect x="30" y="44" width="20" height="5" fill="#d4af37"/><path d="M32,44 V24 Q32,18 40,14 L48,10 V44 Z" fill="${c}"/><path d="M35,41 V26" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`;
- case'cheek':return`<circle cx="40" cy="44" r="28" fill="#2b2b2e"/><circle cx="40" cy="44" r="22" fill="${c}"/><ellipse cx="33" cy="36" rx="8" ry="4" fill="#fff" opacity=".3"/>`;
- case'eye':return`<rect x="10" y="22" width="60" height="44" rx="6" fill="#2b2b2e"/>`+[lt,c,shade(c,-.2),shade(c,-.45)].map((k,i)=>`<rect x="${16+(i%2)*26}" y="${28+Math.floor(i/2)*18}" width="22" height="14" rx="3" fill="${k}"/>`).join('');
+ case'shoulder':return sh+`<path d="M18,40 C18,10 62,10 62,40" fill="none" stroke="${dk}" stroke-width="2"/>`+F('M14,38 h52 q6,0 6,6 v24 q0,6 -6,6 h-52 q-6,0 -6,-6 v-24 q0,-6 6,-6 Z',c)+`<path d="M8,46 q0,-8 6,-8 h52 q6,0 6,8 v6 q-32,14 -64,0 Z" fill="${dk}" opacity=".5"/><path d="M8,52 q32,14 64,0" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1"/><rect x="36" y="54" width="8" height="9" rx="2" fill="url(#gld)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>`+hl('M14,46 Q12,58 15,70',.22,2);
+ case'tote':return sh+`<path d="M24,34 C24,6 40,6 40,34 M40,34 C40,6 56,6 56,34" fill="none" stroke="${dk}" stroke-width="2.4"/>`+F('M10,32 L70,32 L65,75 Q40,77 15,75 Z',c)+`<path d="M10,32 L70,32 L69.4,37 L10.6,37 Z" fill="${dk}" opacity=".35"/><path d="M13,40 L67,40" stroke="rgba(0,0,0,.2)" stroke-width=".6" stroke-dasharray="1.6 1.2"/>`+hl('M16,40 Q15,58 18,72',.2,3);
+ case'pumps':return sh+F('M5,69 C5,64 10,61 18,60 C26,59 30,58 33,57 C42,60 52,58 60,46 L66,44 C67,50 66,56 65,60 L64,76 L61,76 L60,63 C52,66 40,70 24,71 C14,72 6,72 5,69 Z',c)+`<path d="M33,57 C42,60 52,58 60,46 L64,45.5 C57,58 45,63.5 33,57 Z" fill="${shade(c,-.45)}"/>`+hl('M9,66 Q16,62 28,61',.45,1.6)+ln('M5,69 C6,71.5 14,72 24,71',.25,.8);
+ case'sneaker':return sh+F('M7,62 C6,54 12,50 22,48 C30,46 36,42 44,37 C50,34 56,35 60,38 L70,44 C74,48 75,54 75,62 Z',c)+`<path d="M4,61 H76 V68 Q76,73 71,73 H9 Q4,73 4,68 Z" fill="#f6f4f0" stroke="rgba(0,0,0,.18)" stroke-width=".7"/><path d="M5,67.5 H75" stroke="rgba(0,0,0,.12)" stroke-width=".8"/><path d="M7,62 C9,55 14,53 22,52 L24,61 Z" fill="${shade(c,.12)}" opacity=".7"/>`+ln('M32,46 L36,51 M37,43 L41,48 M42,40 L46,45 M47,37.5 L51,42',.45,1.3)+`<path d="M60,38 L70,44 L68,50 Q62,46 58,40 Z" fill="${dk}" opacity=".5"/>`+hl('M14,56 Q30,50 44,40',.3,1.6);
+ case'necklace':return`<path d="M14,8 Q40,72 66,8" fill="none" stroke="${c}" stroke-width="1.4" stroke-dasharray="2 1"/><path d="M40,44 c-4.5,4 -6,8.5 -4,12 c1.5,2.4 6.5,2.4 8,0 c2,-3.5 .5,-8 -4,-12 Z" fill="${c}" stroke="${shade(c,-.35)}" stroke-width=".6"/><circle cx="38.4" cy="51" r="1.4" fill="#fff" opacity=".75"/>`;
+ case'earring':return[26,54].map(x=>`<circle cx="${x}" cy="42" r="11" fill="none" stroke="${c}" stroke-width="3"/><circle cx="${x}" cy="42" r="11" fill="none" stroke="rgba(0,0,0,.15)" stroke-width=".5"/><path d="M${x-8},36 a11,11 0 0 1 9,-5" stroke="#fff" stroke-opacity=".6" stroke-width="1.2" fill="none" stroke-linecap="round"/>`).join('');
+ case'lip':return sh+`<rect x="29" y="46" width="22" height="30" rx="2" fill="url(#lac)"/><rect x="29" y="46" width="22" height="4" fill="url(#gld)"/><rect x="31.5" y="34" width="17" height="12" fill="url(#gld)"/><path d="M33,34 V20 Q33,15 40,12 L47,9 V34 Z" fill="${c}"/><path d="M33,34 V20 Q33,15 40,12 L47,9 V34 Z" fill="url(#shd)"/><path d="M36,31 V21 Q36,17 40,15" stroke="#fff" stroke-opacity=".45" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+ case'cheek':return sh+`<circle cx="40" cy="44" r="29" fill="url(#gld)"/><circle cx="40" cy="44" r="25.5" fill="#1d1c1f"/><circle cx="40" cy="44" r="22" fill="${c}"/><circle cx="40" cy="44" r="22" fill="url(#tex)"/><path d="M28,40 Q40,28 52,40 M30,48 Q40,38 50,48" stroke="${shade(c,-.12)}" stroke-width="1.2" fill="none" opacity=".6"/><ellipse cx="32" cy="35" rx="9" ry="4.5" fill="#fff" opacity=".28" transform="rotate(-25 32 35)"/>`;
+ case'eye':return sh+`<rect x="9" y="20" width="62" height="48" rx="5" fill="url(#lac)"/><rect x="11.5" y="22.5" width="57" height="43" rx="3.5" fill="none" stroke="url(#gld)" stroke-width="1"/>`+[lt,c,shade(c,-.22),shade(c,-.48)].map((k,i)=>{const x=15+(i%2)*26,y=26+Math.floor(i/2)*19;return`<rect x="${x}" y="${y}" width="24" height="16" rx="2.5" fill="${k}"/><rect x="${x}" y="${y}" width="24" height="16" rx="2.5" fill="url(#tex)"/><ellipse cx="${x+8}" cy="${y+5}" rx="6" ry="2.4" fill="#fff" opacity="${i?.2:.35}"/>`}).join('');
  }return''}
 const VB={tee:[30,58,140,192],blouse:[30,58,140,192],knit:[30,58,140,212],shirt:[30,58,140,212],jacket:[24,58,152,212],coat:[24,58,152,362],dress:[30,58,140,316],skirt:[30,160,140,184],flare:[30,160,140,206],pants:[30,160,140,318],wide:[30,160,140,318]};
 function hangerSVG(it){const P=P0,hook=y=>`<path class="hk" d="M100,${y+34} V${y+16} C100,${y+6} 110,${y+4} 110,${y+12}" fill="none" stroke-width="2.6" stroke-linecap="round"/>`,g=garment(it.type,it.color,P,false);
@@ -577,28 +616,28 @@ function avatar(o,p,meas){if(p.useAv&&p.photoAv)return photoAvatar(o,p,meas);
  const P=bodyP(p),{S:s,B,W,H}=P,sk=p.skin,hr=p.hair,it=k=>o[k]&&getItem(o[k]);
  const wear=k=>{const x=it(k);return x?(x.cut&&x.photo?photoOn(x,P):garment(x.type,x.color,P,true)):''};
  const cz=(k,d)=>{const x=it(k);return x?x.color:d},both=e=>e+`<g transform="matrix(-1 0 0 1 200 0)">${e}</g>`;
- const ey=cz('eye',null),ch=cz('cheek','#f0a8a4'),lp=cz('lip','#d98a8c'),line='rgba(110,60,45,';
+ const hd=e=>`<g transform="matrix(.88 0 0 .88 12 12.2)">${e}</g>`,ey=cz('eye',null),ch=cz('cheek','#f0a8a4'),lp=cz('lip','#d98a8c'),line='rgba(110,60,45,';
  const body=symPath([9,98],[[[12,104],[s-6,106],[s,112]],[[s+3,118],[s+2,132],[B,146]],[[B-1,166],[W+1,180],[W,192]],[[W-1,206],[H,222],[H+.5,242]],[[H+.5,258],[H-1,272],[H-3,290]],[[H-5,330],[H*.5+9,358],[H*.5+6,382]],[[H*.5+8,410],[H*.42+7,446],[H*.35+3.5,484]],[[H*.35+3,492]],[[6.5,492]],[[5.5,468],[3.5,446],[3.5,425]],[[3.5,405],[4.5,392],[4,380]],[[3,340],[1.5,300],[1,278]]]);
  const arm=`<path d="M${L(s-5)},120 C${L(s+3)},112 ${L(s+8)},122 ${L(s+8)},140 C${L(s+9)},162 ${L(s+8)},176 ${L(s+8)},190 C${L(s+8)},214 ${L(s+7)},236 ${L(s+6.5)},254 C${L(s+8)},262 ${L(s+7)},276 ${L(s+3)},280 C${L(s)},281 ${L(s-1.5)},274 ${L(s)},266 L${L(s+.5)},254 C${L(s+.5)},236 ${L(s+.5)},214 ${L(s+1)},192 C${L(s)},176 ${L(s-2)},160 ${L(s-4)},146 Z" fill="url(#skinG)"/>`;
  const foot=`<path d="M${L(15)},489 C${L(16)},496 ${L(13)},503 ${L(9)},503 C${L(6)},503 ${L(5.5)},497 ${L(6.5)},489 Z" fill="url(#skinG)"/>`;
- const eye=`${ey?`<ellipse cx="91" cy="56.3" rx="6.8" ry="3.3" fill="${ey}" opacity=".55" filter="url(#soft)"/>`:''}<path d="M85,59 Q91,54.5 97,59 Q91,62.6 85,59 Z" fill="#fbf8f6"/>`;
- const lash=`<path d="M84.4,59.2 Q91,53.6 97.6,58.6" stroke="#2a1d18" stroke-width="1.35" fill="none" stroke-linecap="round"/><path d="M84.6,59.1 L82.8,57.4" stroke="#2a1d18" stroke-width="1" stroke-linecap="round"/><path d="M85.6,56.3 Q91,52.3 96.6,56.1" stroke="${line}.35)" stroke-width=".7" fill="none"/><path d="M86.6,60.9 Q91,62.8 95.6,60.8" stroke="rgba(60,30,20,.18)" stroke-width=".6" fill="none"/><path d="M84,51.2 Q89,47.4 96.2,49.4" stroke="${shade(hr,-.1)}" stroke-width="1.7" fill="none" stroke-linecap="round"/><ellipse cx="85" cy="70" rx="6.2" ry="4" fill="${ch}" opacity="${it('cheek')?.55:.35}" filter="url(#soft)"/>`;
+ const eye=`${ey?`<ellipse cx="91" cy="56.3" rx="6.8" ry="3.3" fill="${ey}" opacity=".55" filter="url(#soft)"/>`:''}<path d="M85.4,59 Q91,55.3 96.6,59 Q91,61.9 85.4,59 Z" fill="#fbf8f6"/>`;
+ const lash=`<path d="M84.8,59.1 Q91,54.5 97.2,58.7" stroke="#2a1d18" stroke-width="1.15" fill="none" stroke-linecap="round"/><path d="M84.6,59.1 L82.8,57.4" stroke="#2a1d18" stroke-width="1" stroke-linecap="round"/><path d="M85.6,56.3 Q91,52.3 96.6,56.1" stroke="${line}.35)" stroke-width=".7" fill="none"/><path d="M86.6,60.9 Q91,62.8 95.6,60.8" stroke="rgba(60,30,20,.18)" stroke-width=".6" fill="none"/><path d="M84.6,51 Q89.5,48 96,49.5" stroke="${shade(hr,-.1)}" stroke-width="1.25" fill="none" stroke-linecap="round"/><ellipse cx="85" cy="70" rx="6.2" ry="4" fill="${ch}" opacity="${it('cheek')?.3:.15}" filter="url(#soft)"/>`;
  let g=`<ellipse cx="100" cy="505" rx="46" ry="5" fill="rgba(0,0,0,.14)" filter="url(#soft)"/>`
- +`<path d="M74,54 C70,30 84,21 100,21 C116,21 130,30 126,54 C128,82 129,112 ${R(s+3)},152 C122,158 112,154 107,144 L93,144 C88,154 78,158 ${L(s+3)},152 C71,112 72,82 74,54 Z" fill="url(#hairG)"/>`
+ +hd(`<path d="M74,54 C70,30 84,21 100,21 C116,21 130,30 126,54 C128,82 129,112 ${R(s+3)},152 C122,158 112,154 107,144 L93,144 C88,154 78,158 ${L(s+3)},152 C71,112 72,82 74,54 Z" fill="url(#hairG)"/>`)
  +both(arm)+`<path d="M92,74 C92,84 91,92 89,99 L111,99 C109,92 108,84 108,74 Z" fill="url(#skinG)"/>`
  +`<path d="${body}" fill="url(#skinG)"/>`+both(foot)
  +`<path d="M92,82 Q100,95 108,82 L108,88 Q100,99 92,88 Z" fill="rgba(80,40,30,.1)"/>`
  +both(`<path d="M89,103.5 Q94,106 98.5,104.5" stroke="${line}.16)" stroke-width=".9" fill="none"/><path d="M${L(H*.5+2)},377 q3.5,3 7,0" stroke="${line}.12)" fill="none"/>`)
- +`<ellipse cx="76.5" cy="60" rx="3.2" ry="5.5" fill="${shade(sk,-.06)}"/><ellipse cx="123.5" cy="60" rx="3.2" ry="5.5" fill="${shade(sk,-.06)}"/>`
- +`<path d="M100,27 C114.5,27 124,38 124,54 C124,66 120.5,74 114,80.5 C109.5,84.5 104.5,87 100,87 C95.5,87 90.5,84.5 86,80.5 C79.5,74 76,66 76,54 C76,38 85.5,27 100,27 Z" fill="url(#faceG)"/>`
+ +hd(`<ellipse cx="76.5" cy="60" rx="3.2" ry="5.5" fill="${shade(sk,-.06)}"/><ellipse cx="123.5" cy="60" rx="3.2" ry="5.5" fill="${shade(sk,-.06)}"/>`
+ +`<path d="M100,27 C114.5,27 124,38 124,54 C124,66 120.5,74 114,80.5 C109.5,84.5 104.5,87 100,87 C95.5,87 90.5,84.5 86,80.5 C79.5,74 76,66 76,54 C76,38 85.5,27 100,27 Z" fill="url(#faceG)"/>`)
  +`<path d="M${L(B-2)},122 Q100,128 ${R(B-2)},122 L${R(W)},192 L${L(W)},192 Z" fill="#efe6dc"/><path d="M${L(W+1)},190 L${R(W+1)},190 Q${R(H+1)},230 ${R(H)},262 L${R(2)},266 L100,262 L${L(2)},266 L${L(H)},262 Q${L(H+1)},230 ${L(W+1)},190 Z" fill="#efe6dc"/>`
  +wear('shoes')+wear('bottoms')+wear('tops')+wear('dress')+wear('outer')+wear('acc')+wear('bag')
- +both(eye)+`<g clip-path="url(#eyeClip)"><circle cx="91" cy="59.2" r="2.9" fill="url(#iris)"/><circle cx="109" cy="59.2" r="2.9" fill="url(#iris)"/></g><circle cx="91" cy="59.4" r="1.25" fill="#160d08"/><circle cx="109" cy="59.4" r="1.25" fill="#160d08"/><circle cx="92.1" cy="58" r=".8" fill="#fff"/><circle cx="110.1" cy="58" r=".8" fill="#fff"/>`
+ +hd(both(eye)+`<g clip-path="url(#eyeClip)"><circle cx="91" cy="59.2" r="2.5" fill="url(#iris)"/><circle cx="109" cy="59.2" r="2.5" fill="url(#iris)"/></g><circle cx="91" cy="59.4" r="1.05" fill="#160d08"/><circle cx="109" cy="59.4" r="1.05" fill="#160d08"/><circle cx="92.1" cy="58" r=".8" fill="#fff"/><circle cx="110.1" cy="58" r=".8" fill="#fff"/>`
  +both(lash)+`<path d="M99.6,62.5 C99.2,66 98.4,68.6 99,70.2" stroke="${line}.28)" stroke-width=".8" fill="none"/><path d="M97.6,70.6 Q100,72 102.4,70.6" stroke="${line}.32)" stroke-width=".7" fill="none"/>`
  +`<path d="M95,76.4 Q97.6,74.5 100,75.6 Q102.4,74.5 105,76.4 Q100,77.4 95,76.4 Z" fill="${shade(lp,-.1)}"/><path d="M95.4,76.6 Q100,77.4 104.6,76.6 Q100,81 95.4,76.6 Z" fill="${lp}"/><ellipse cx="100.6" cy="78.4" rx="1.8" ry=".55" fill="#fff" opacity=".45"/><path d="M95.2,76.5 Q100,77.5 104.8,76.5" stroke="${shade(lp,-.35)}" stroke-width=".5" fill="none"/>`
  +`<path d="M75.5,57 C73,36 85,24.5 101,24.5 C117,24.5 127,36 124.5,57 C121,45 114,38 104,36.5 C99,45 89,52 75.5,57 Z" fill="url(#hairG)"/>`
  +both(`<path d="M77,46 C71,70 71,100 80,128 C84,121 85,113 84,104 C81,86 80,66 83,52 Z" fill="url(#hairG)"/>`)
- +`<path d="M98,27 C90,32 85,40 82,50 M104,27 C112,31 118,38 121,48 M79,70 C78,90 79,108 82,122 M121,70 C122,90 121,108 118,122" stroke="#fff" stroke-opacity=".2" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
+ +`<path d="M98,27 C90,32 85,40 82,50 M104,27 C112,31 118,38 121,48 M79,70 C78,90 79,108 82,122 M121,70 C122,90 121,108 118,122" stroke="#fff" stroke-opacity=".2" stroke-width="1.1" fill="none" stroke-linecap="round"/>`);
  if(meas)g+=measG(p,P);
  return g}
 function measG(p,{H}){const tl=(y,j,v)=>`<path class="ml" d="M${L(H+6)},${y} H-24" stroke-width=".8" stroke-dasharray="2 2"/><text x="-28" y="${y-3}" text-anchor="end" class="mt ms">${j}</text><text x="-28" y="${y+12}" text-anchor="end" class="mt">${v}</text>`;
