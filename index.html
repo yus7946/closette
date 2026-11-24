@@ -298,6 +298,11 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
       <h2 class="title">マイページ</h2>
       <div class="card"><h3>マイ体型</h3>
         <div class="me-top"><svg id="meAv" viewBox="28 10 144 500"></svg><div style="flex:1"><p class="muted">アバターに反映されます。数字はこの端末の中だけに保存されます。</p><p class="btype" id="meType" style="text-align:left;padding:8px 0 0"></p></div></div>
+        <div class="fl">アバターの見た目<div class="seg" id="avSeg" style="margin-top:6px"><button data-act="avMode" data-k="0">イラスト</button><button data-act="avMode" data-k="1">自分の写真</button></div></div>
+        <label class="btn accent wide">📷 全身写真でアバターを作る<input type="file" accept="image/*" id="av-photo" hidden></label>
+        <div id="avProc"></div>
+        <p class="muted" style="margin-top:8px">正面・気をつけの姿勢で、頭から足先まで写るように撮ってください。体のラインがわかる服（無地のTシャツ＋レギンスなど）だと、服がきれいに重なります。写真はこの端末の中だけで処理・保存され、外部には送られません。</p>
+        <button class="btn sm ghost wide" id="avDel" data-act="avDel">写真アバターを削除</button>
         <div class="nums" id="nums" style="margin-top:12px"></div>
         <label class="fl"><input type="checkbox" data-p="showW" id="showW"> 体重もアバターに表示する</label>
         <div class="fl">肌の色<div class="sw" id="skinCol"></div></div>
@@ -399,6 +404,29 @@ function makeTex(){const c=document.createElement('canvas');c.width=c.height=80;
 function applyLook(){const a=$('#app'),h=HANGERS[S.hanger&&S.hanger!=='auto'?S.hanger:SKIN_HG[S.skin]],sk=S.profile.skin,hr=S.profile.hair;a.dataset.skin=S.skin;a.style.setProperty('--hgw',h.w);
  [['hg0',h.c[0]],['hg1',h.c[1]],['hg2',h.c[2]],['sk0',shade(sk,-.1)],['sk1',shade(sk,.07)],['sk2',shade(sk,-.13)],['fk0',shade(sk,.07)],['fk1',shade(sk,-.05)],['hr0',shade(hr,.2)],['hr1',hr],['hr2',shade(hr,-.28)]].forEach(([id,c])=>$('#'+id).setAttribute('stop-color',c))}
 
+/* ---------- photo avatar (own full-body photo + pose landmarks) ---------- */
+let PM=null;const MPV='0.10.35';
+async function detectPose(c){if(!PM){const m=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MPV}/vision_bundle.mjs`),fs=await m.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MPV}/wasm`);
+  PM=await m.PoseLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'},runningMode:'IMAGE',numPoses:1})}
+ const t=document.createElement('canvas');t.width=c.width;t.height=c.height;const x=t.getContext('2d');x.fillStyle='#eeeeee';x.fillRect(0,0,t.width,t.height);x.drawImage(c,0,0);
+ const l=PM.detect(t).landmarks?.[0];if(!l)return null;const P=i=>[l[i].x*c.width,l[i].y*c.height];return{ls:P(11),rs:P(12),lh:P(23),rh:P(24),la:P(27),ra:P(28)}}
+const estimateLm=(w,h)=>{const c=w/2,u=h*.1;return{est:1,ls:[c-u,h*.19],rs:[c+u,h*.19],lh:[c-u*.6,h*.5],rh:[c+u*.6,h*.5],la:[c-u*.4,h*.95],ra:[c+u*.4,h*.95]}};
+function cropAlpha(c,max){const w=c.width,h=c.height,x=c.getContext('2d'),im=x.getImageData(0,0,w,h),d=im.data;let x0=w,y0=h,x1=0,y1=0;
+ for(let p=0,i=3;i<d.length;i+=4,p++){const a=d[i];d[i]=a<90?0:a>190?255:(a-90)*2.55;if(d[i]>40){const X=p%w,Y=(p/w)|0;if(X<x0)x0=X;if(X>x1)x1=X;if(Y<y0)y0=Y;if(Y>y1)y1=Y}}
+ x.putImageData(im,0,0);if(x1<=x0)return c;const cw=x1-x0+1,ch=y1-y0+1,k=Math.min(1,max/ch),o=document.createElement('canvas');o.width=Math.round(cw*k);o.height=Math.round(ch*k);o.getContext('2d').drawImage(c,x0,y0,cw,ch,0,0,o.width,o.height);return o}
+const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+// map avatar coordinates onto the photo: upper body uses shoulders→hips, lower body uses hips→ankles
+function segM(lm,P,up){const sc=mid(lm.ls,lm.rs),hc=mid(lm.lh,lm.rh),ac=mid(lm.la,lm.ra),sx=Math.abs(lm.ls[0]-lm.rs[0])/(2*(P.S-4));
+ if(up){const sy=(hc[1]-sc[1])/140;return`matrix(${sx} 0 0 ${sy} ${sc[0]-100*sx} ${sc[1]-110*sy})`}
+ const sxL=(sx+Math.abs(lm.lh[0]-lm.rh[0])/(2*P.H*.55))/2,sy=(ac[1]-hc[1])/238;return`matrix(${sxL} 0 0 ${sy} ${hc[0]-100*sxL} ${hc[1]-250*sy})`}
+const avS=lm=>{const sc=mid(lm.ls,lm.rs);return[sc,(mid(lm.la,lm.ra)[1]-sc[1])/378]};
+function avBox(p,mini){const b=mini?[28,10,144,500]:[-75,6,350,505],A=p.useAv&&p.photoAv;if(!A)return b.join(' ');const [sc,s]=avS(A.lm);return[sc[0]+(b[0]-100)*s,sc[1]+(b[1]-110)*s,b[2]*s,b[3]*s].map(v=>v.toFixed(1)).join(' ')}
+function photoAvatar(o,p,meas){const A=p.photoAv,P=bodyP(p),tU=segM(A.lm,P,1),tL=segM(A.lm,P,0),[sc,s]=avS(A.lm);
+ const wear=(k,t)=>{const x=o[k]&&getItem(o[k]);return x?`<g transform="${t}">${x.cut&&x.photo?photoOn(x,P):garment(x.type,x.color,P,true)}</g>`:''};
+ return`<ellipse cx="${A.w/2}" cy="${A.h*.992}" rx="${A.w*.34}" ry="${A.h*.012}" fill="rgba(0,0,0,.16)"/><image href="${A.url}" width="${A.w}" height="${A.h}"/>`
+  +wear('shoes',tL)+wear('bottoms',tL)+wear('tops',tU)+wear('dress',tU)+wear('outer',tU)+wear('acc',tU)+wear('bag',tU)
+  +(meas?`<g transform="matrix(${s} 0 0 ${s} ${sc[0]-100*s} ${sc[1]-110*s})">${measG(p,P)}</g>`:'')}
+
 /* ---------- SVG drawing ---------- */
 const L=x=>(100-x).toFixed(1),R=x=>(100+x).toFixed(1);
 const F=(d,c)=>`<path d="${d}" fill="${c}" stroke="rgba(0,0,0,.14)" stroke-width=".8"/><path d="${d}" fill="url(#shd)"/><path d="${d}" fill="url(#tex)"/>`;
@@ -463,7 +491,7 @@ function hangerSVG(it){const P=P0,hook=y=>`<path class="hk" d="M100,${y+34} V${y
  return hook(160)+g+`<path class="hg hgb" d="M${L(P.W+9)},188 H${R(P.W+9)}" stroke-width="3.5" stroke-linecap="round"/><rect class="hgf" x="${(100-P.W)-1}" y="184" width="4" height="10" rx="1"/><rect class="hgf" x="${(100+P.W)-3}" y="184" width="4" height="10" rx="1"/>`}
 function itemSVG(it){if(!HANG.includes(it.cat))return`<svg viewBox="0 0 80 80">${shelfSVG(it)}</svg>`;const v=VB[it.type];return`<svg viewBox="${v.join(' ')}" style="--w:${v[2]}">${hangerSVG(it)}</svg>`}
 function bodyType(p){const d=p.hip-p.bust,r=p.waist/p.hip;return BT[r<.72&&Math.abs(d)<=6?'hour':d>6?'pear':d<-3?'apple':'straight']}
-function avatar(o,p,meas){
+function avatar(o,p,meas){if(p.useAv&&p.photoAv)return photoAvatar(o,p,meas);
  const P=bodyP(p),{S:s,B,W,H}=P,sk=p.skin,hr=p.hair,it=k=>o[k]&&getItem(o[k]);
  const wear=k=>{const x=it(k);return x?(x.cut&&x.photo?photoOn(x,P):garment(x.type,x.color,P,true)):''};
  const cz=(k,d)=>{const x=it(k);return x?x.color:d},both=e=>e+`<g transform="matrix(-1 0 0 1 200 0)">${e}</g>`;
@@ -489,9 +517,10 @@ function avatar(o,p,meas){
  +`<path d="M75.5,57 C73,36 85,24.5 101,24.5 C117,24.5 127,36 124.5,57 C121,45 114,38 104,36.5 C99,45 89,52 75.5,57 Z" fill="url(#hairG)"/>`
  +both(`<path d="M77,46 C71,70 71,100 80,128 C84,121 85,113 84,104 C81,86 80,66 83,52 Z" fill="url(#hairG)"/>`)
  +`<path d="M98,27 C90,32 85,40 82,50 M104,27 C112,31 118,38 121,48 M79,70 C78,90 79,108 82,122 M121,70 C122,90 121,108 118,122" stroke="#fff" stroke-opacity=".2" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
- if(meas){const tl=(y,j,v)=>`<path class="ml" d="M${L(H+6)},${y} H-24" stroke-width=".8" stroke-dasharray="2 2"/><text x="-28" y="${y-3}" text-anchor="end" class="mt ms">${j}</text><text x="-28" y="${y+12}" text-anchor="end" class="mt">${v}</text>`;
-  g+=tl(145,'バスト',p.bust)+tl(192,'ウエスト',p.waist)+tl(240,'ヒップ',p.hip)+`<path class="ml" d="M232,18 V498 M226,18 H238 M226,498 H238" stroke-width=".9"/><text x="244" y="258" class="mt" text-anchor="middle" transform="rotate(90 244 258)">身長 ${p.height}cm</text>`+(p.showW?`<text x="232" y="12" class="mt ms" text-anchor="middle">体重 ${p.weight}kg</text>`:'')}
+ if(meas)g+=measG(p,P);
  return g}
+function measG(p,{H}){const tl=(y,j,v)=>`<path class="ml" d="M${L(H+6)},${y} H-24" stroke-width=".8" stroke-dasharray="2 2"/><text x="-28" y="${y-3}" text-anchor="end" class="mt ms">${j}</text><text x="-28" y="${y+12}" text-anchor="end" class="mt">${v}</text>`;
+  return tl(145,'バスト',p.bust)+tl(192,'ウエスト',p.waist)+tl(240,'ヒップ',p.hip)+`<path class="ml" d="M232,18 V498 M226,18 H238 M226,498 H238" stroke-width=".9"/><text x="244" y="258" class="mt" text-anchor="middle" transform="rotate(90 244 258)">身長 ${p.height}cm</text>`+(p.showW?`<text x="232" y="12" class="mt ms" text-anchor="middle">体重 ${p.weight}kg</text>`:'')}
 
 /* ---------- data ---------- */
 const getItem=id=>S.items.find(i=>i.id===id)||S.cosme.find(i=>i.id===id)||S.virtual?.[id];
@@ -541,7 +570,7 @@ function renderCloset(){
  $('#count').textContent=`全${S.items.length+S.cosme.length}点`;
 }
 const SLOTS=[['tops','トップス'],['bottoms','ボトムス'],['dress','ワンピ'],['outer','アウター'],['bag','バッグ'],['shoes','シューズ'],['acc','アクセ'],['lip','リップ'],['cheek','チーク'],['eye','アイ']];
-function renderAvatar(){const p=S.profile;$('#avatar').style.setProperty('--hs',Math.min(1.06,Math.max(.9,p.height/160)).toFixed(3));$('#avatar').innerHTML=avatar(S.outfit,p,true);const b=bodyType(p);$('#btype').innerHTML=`体型バランス <b>${b[0]}</b> ・ ${b[1]}`}
+function renderAvatar(){const p=S.profile;$('#avatar').style.setProperty('--hs',Math.min(1.06,Math.max(.9,p.height/160)).toFixed(3));$('#avatar').setAttribute('viewBox',avBox(p,false));$('#avatar').innerHTML=avatar(S.outfit,p,true);const b=bodyType(p);$('#btype').innerHTML=`体型バランス <b>${b[0]}</b> ・ ${b[1]}`}
 function renderDress(){renderAvatar();
  $('#slotChips').innerHTML=SLOTS.map(([k,n])=>chip('slot',k,n,dSlot===k)).join('');
  const list=[...(COSME[dSlot]?S.cosme.filter(i=>i.kind===dSlot):S.items.filter(i=>i.cat===dSlot)),...Object.values(S.virtual).filter(v=>v.cat===dSlot)];
@@ -569,7 +598,7 @@ function renderMe(){const p=S.profile;
  $('#hairCol').innerHTML=HAIRC.map(c=>`<button class="swc ${p.hair===c?'on':''}" style="background:${c}" data-act="pcol" data-k="hair" data-c="${c}"></button>`).join('');
  $('#pcCards').innerHTML=Object.entries(PC).map(([k,x])=>`<button class="pcc ${p.pc===k?'on':''}" data-act="pcSet" data-k="${k}">${x.n}<div class="dots">${x.c.slice(0,6).map(c=>`<i style="background:${c[1]}"></i>`).join('')}</div></button>`).join('');
  $('#skinBox').innerHTML=skinsHTML();meAv()}
-function meAv(){$('#meAv').innerHTML=avatar(S.outfit,S.profile,false);const b=bodyType(S.profile);$('#meType').innerHTML=`<b>${b[0]}</b><br>${b[1]}`}
+function meAv(){const p=S.profile;$('#meAv').setAttribute('viewBox',avBox(p,true));$('#meAv').innerHTML=avatar(S.outfit,p,false);$$('#avSeg button').forEach(b=>b.classList.toggle('on',(b.dataset.k==='1')===!!(p.useAv&&p.photoAv)));$('#avDel').style.display=p.photoAv?'':'none';const b=bodyType(S.profile);$('#meType').innerHTML=`<b>${b[0]}</b><br>${b[1]}`}
 function skinsHTML(){const cur=S.hanger||'auto';return skinGrid()+`<p class="fl" style="margin-top:16px">ハンガー</p><div class="hgs">${Object.entries(HANGERS).map(([k,h])=>`<button class="hgc ${cur===k?'on':''}" data-act="hanger" data-k="${k}"><i style="background:${h.c?`linear-gradient(180deg,${h.c[0]},${h.c[1]} 60%,${h.c[2]})`:'conic-gradient(#d4a373,#e9c76a,#d6d6da,#e094a8,#d4a373)'}"></i>${h.n}${h.p?'<em>プレミアム</em>':''}</button>`).join('')}</div>`}
 function skinGrid(){const cols=['#c7b8e0','#e4d3bd','#2e3b5c','#efc4cc'];return`<div class="skins">${Object.entries(SKINS).map(([k,s])=>`<button class="skin ${S.skin===k?'on':''}" data-act="skin" data-k="${k}"><span class="sk-prev" data-skin="${k}"><i></i>${cols.map((c,j)=>`<b style="left:${12+j*20}px;background:${c};height:${30+j%2*10}px"></b>`).join('')}</span>${s.n}${s.p?'<em>プレミアム</em>':''}</button>`).join('')}</div>`}
 /* ---------- styling (personal color × scene) ---------- */
@@ -604,7 +633,7 @@ function suggest(){
   const why=`${PC[pc]?PC[pc].n+'に似合う色を軸にした、':''}${sc.mood}${sc.n}コーデ。${!c.dress&&Math.abs(hsl(c.tops.color).l-hsl(c.bottoms.color).l)>.22?'明暗のメリハリでスタイルアップ。':''}`;
   return{o,o2,v,why}});
  save();renderProps()}
-const miniAv=o=>{const {outer,...r}=o;return`<svg viewBox="28 10 144 500">${avatar(r,S.profile)}</svg>`};
+const miniAv=o=>{const {outer,...r}=o;return`<svg viewBox="${avBox(S.profile,true)}">${avatar(r,S.profile)}</svg>`};
 function renderProps(){const sc=SCENES[scene],pc=PC[S.profile.pc];
  $('#props').innerHTML=PROPS.length?PROPS.map((p,i)=>`<article class="prop"><div class="prop-h"><span class="jt">コーデ ${i+1}</span><b>${sc.n} ・ ${SEASONS[curSeason()]}</b></div>
  <div class="ba"><figure>${miniAv(p.o)}<figcaption>手持ちだけで</figcaption></figure>${p.v?`<span class="plus">+1</span><figure>${miniAv(p.o2)}<figcaption>1着買い足すと</figcaption></figure>`:''}</div>
@@ -691,6 +720,8 @@ const ACT={
  sSea:el=>{sSea=el.dataset.k;renderSeason();drop('#sRail .hang')},
  check:()=>{const t=$('#c-type').value,c=$('#c-color').value,sim=similar(t,c);$('#checkRes').innerHTML=sim.length?`<div class="warn"><b>ちょっと待って！似た服を${sim.length}点持っています</b><div class="mlist hs" style="padding-left:0">${sim.map(i=>pk(i,false)).join('')}</div></div>`:`<div class="ok"><b>似た服は持っていません。</b><br>新しい仲間としてお迎えOK！</div>`},
  pcol:el=>{S.profile[el.dataset.k]=el.dataset.c;save();applyLook();renderMe()},
+ avMode:el=>{const on=el.dataset.k==='1';if(on&&!S.profile.photoAv)return $('#av-photo').click();S.profile.useAv=on;PROPS=[];save();meAv()},
+ avDel:()=>{if(!confirm('写真アバターを削除しますか？（イラストのアバターに戻ります）'))return;delete S.profile.photoAv;S.profile.useAv=false;PROPS=[];save();meAv();toast('写真アバターを削除しました')},
  hanger:el=>{S.hanger=el.dataset.k;save();applyLook();$$('.hgc').forEach(b=>b.classList.toggle('on',b.dataset.k===S.hanger));if(HANGERS[S.hanger].p)toast('プレミアムハンガーを試着中（今だけ無料）');kick('#rail',4)},
  clearSamples:()=>{if(!confirm('サンプルの服とコスメを消しますか？（自分で追加したものは残ります）'))return;const ref=seed(),N=new Set([...ref.items,...ref.cosme].map(i=>i.name)),isS=i=>i.sample||(!i.photo&&N.has(i.name));
   S.items=S.items.filter(i=>!isS(i));S.cosme=S.cosme.filter(i=>!isS(i));for(const k in S.outfit)if(!getItem(S.outfit[k]))delete S.outfit[k];PROPS=[];save();renderAll();toast('サンプルを消しました')},
@@ -728,6 +759,13 @@ document.addEventListener('change',async e=>{const t=e.target;
   const d=await makeCutout(f,m=>{const e=$('#procMsg .proc');if(e)e.textContent=m});fm._busy=false;if(FM!==fm)return;
   FM.photo=d.url;FM.cut=d.cut;$('#phMain').innerHTML=`<img src="${d.url}" style="object-fit:contain;background:#f4efe9">${inp}`;$('#procMsg').innerHTML='';setColor(d.color);
   toast(d.cut?`切り抜き完了・色：${cname(d.color)}`:'うまく切り抜けなかったので、写真をそのまま使います')}
+ if(t.id==='av-photo'&&t.files[0]){const msg=m=>$('#avProc').innerHTML=`<div class="proc">${m}</div>`;try{const src=toCanvas(await loadImg(t.files[0]),1400);let out;
+  try{msg('切り抜きAIを準備中…（初回だけ少し時間がかかります）');BGM=BGM||await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
+   const res=await BGM.removeBackground(await new Promise(r=>src.toBlob(r,'image/jpeg',.92)),{model:'isnet_quint8',output:{format:'image/png'},progress:(k,c,tt)=>msg(k.startsWith('fetch')&&tt?`切り抜きAIを読み込み中… ${Math.round(c/tt*100)}%`:'背景を切り抜いています…')});
+   out=toCanvas(await loadImg(res),1400)}catch(e){console.warn(e);msg('簡易モードで切り抜いています…');out=floodCut(src)}
+  const cut=cropAlpha(out,1000);msg('体の位置を読み取っています…');let lm=null;try{lm=await detectPose(cut)}catch(e){console.warn('pose failed',e)}
+  S.profile.photoAv={url:cut.toDataURL('image/png'),w:cut.width,h:cut.height,lm:lm||estimateLm(cut.width,cut.height)};S.profile.useAv=true;PROPS=[];save();$('#avProc').innerHTML='';meAv();
+  toast(lm?'写真アバターができました！':'アバターができました（体の位置は推定です）')}catch(e){console.warn(e);$('#avProc').innerHTML='';toast('写真を読み込めませんでした')}t.value=''}
  if(t.id==='c-photo'&&t.files[0]){const d=await imgData(t.files[0],300);$('#c-color').value=d.color;$('#cColTxt').textContent=cname(d.color);$('#cPh').innerHTML=`<img src="${d.url}"><input type="file" accept="image/*" id="c-photo" hidden>`}
  if(t.id==='importF'&&t.files[0]){try{const d=JSON.parse(await t.files[0].text());if(!d.items)throw 0;S=d;S.virtual=S.virtual||{};S.outfit=S.outfit||{};S.profile={...DEFP,...S.profile};save();applyLook();renderAll();toast('復元しました')}catch(_){toast('ファイルを読み込めませんでした')}t.value=''}});
 
